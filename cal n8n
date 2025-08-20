@@ -1,0 +1,22 @@
+AGENDAR POST
+HEADER
+Authorization
+Bearer cal_live_2e02c79f60f8befeaff12273688650c3
+
+cal-api-version
+2024-08-13
+
+BODY
+{
+  "start": "{{ $('Set Datos Mock').item.json.fecha_evento }}",
+  "eventTypeId": 3031539,
+  "attendee": {
+    "name": "{{ $('Set Datos Mock').item.json.nombre_completo }}",
+    "email": "{{ $('Set Datos Mock').item.json.email }}",
+   "timeZone": "America/Mendoza",
+"language": "es"
+  },
+  "bookingFieldsResponses": {
+    "Telefono": "{{ $('Set Datos Mock').item.json.telefono }}"
+  }
+}

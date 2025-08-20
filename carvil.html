@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CARVIL Technology Solutions</title>
+  <meta name="description" content="Transformamos tu negocio con soluciones digitales guiadas por IA." />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Font Awesome para íconos sociales -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    #language-selector {
+      margin-left: 1rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.3rem;
+      border: 1px solid #ccc;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark #language-selector {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <button id="toggle-theme" aria-label="Cambiar tema">
+      <i data-lucide="moon" class="icon-theme"></i>
+    </button>
+
+    <div class="logo-title" data-i18n="companyName">
+      <img src="logosf.png" alt="Logo" />
+      CARVIL Technology Solutions
+    </div>
+
+    <nav class="menu-principal">
+      <a href="#servicios" class="menu-link" data-i18n="services">Servicios</a>
+      <a href="#nosotros" class="menu-link" data-i18n="aboutUs">Nosotros</a>
+      <a href="#contacto" class="menu-link" data-i18n="contact">Contacto</a>
+    </nav>
+
+    <div class="social-icons">
+      <a href="https://www.facebook.com/profile.php?id=61577767590965" target="_blank" aria-label="Facebook">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://x.com/carvilsas" target="_blank" aria-label="X">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://www.linkedin.com/in/eduardo-carballo-gais-b70273a1/" target="_blank" aria-label="LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </div>
+
+    <select id="language-selector" aria-label="Selector de idioma">
+      <option value="es" selected>ES</option>
+      <option value="en">EN</option>
+    </select>
+  </header>
+
+  <main>
+    <!-- Servicios -->
+    <section class="servicios" id="servicios">
+      <h2 class="servicios-titulo" data-i18n="ourServices">Nuestros Servicios</h2>
+      <div class="servicios-texto" data-i18n="servicesText">
+        Ofrecemos soluciones tecnológicas integrales, desde sistemas empresariales completos hasta herramientas específicas que impulsan la transformación digital de tu negocio
+      </div>
+
+      <div class="center-container">
+        <a href="https://tuservidor.com/crear-agente" target="_blank" class="btn-outline" data-i18n="automationTryLink">
+          ✨ CREA TU AGENTE VIRTUAL CON IA
+        </a>
+      </div>
+
+      <div class="servicios-grid">
+        <div class="servicio">
+          <i data-lucide="database"></i>
+          <h3 data-i18n="erpTitle">Sistemas ERP</h3>
+          <p data-i18n="erpDesc">
+            Integración completa y eficiente de todos los procesos empresariales clave como finanzas, recursos humanos, cadena de suministro, inventarios y ventas en una única plataforma centralizada...
+          </p>
+        </div>
+        <div class="servicio">
+          <i data-lucide="users"></i>
+          <h3 data-i18n="crmTitle">Sistemas CRM</h3>
+          <p data-i18n="crmDesc">
+            Optimizamos la gestión de la relación con tus clientes mediante la automatización inteligente del proceso de ventas...
+          </p>
+        </div>
+        <div class="servicio">
+          <i data-lucide="smartphone"></i>
+          <h3 data-i18n="multichannelTitle">Soluciones Multicanal</h3>
+          <p data-i18n="multichannelDesc">
+            Servicios Digitales integrados para web, móviles y múltiples dispositivos...
+          </p>
+        </div>
+        <div class="servicio">
+          <i data-lucide="cloud"></i>
+          <h3 data-i18n="cloudTitle">Servicios en la Nube</h3>
+          <p data-i18n="cloudDesc">
+            Infraestructura escalable y remota para tu negocio...
+          </p>
+        </div>
+        <div class="servicio">
+          <i data-lucide="globe"></i>
+          <h3 data-i18n="contentMgmtTitle">Gestión de Contenidos Web</h3>
+          <p data-i18n="contentMgmtDesc">
+            Diseño web responsivo y optimizado para ventas...
+          </p>
+        </div>
+        <div class="servicio">
+          <i data-lucide="cpu"></i>
+          <h3 data-i18n="automationTitle">Automatización y Agentes Inteligentes Personalizados</h3>
+          <p data-i18n="automationDesc">
+            Potencia tu negocio con soluciones backend avanzadas...
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aquí irían las secciones "Nosotros", "Proyectos" y "Contacto" originales -->
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <!-- Footer original -->
+  </footer>
+
+  <!-- Chatbot, traducciones y scripts -->
+  <script src="script.js"></script>
+</body>
+</html>

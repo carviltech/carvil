@@ -1,0 +1,148 @@
+<section class="create-agent">
+  <h2>Crea tu Propio Agente Inteligente</h2>
+  <p>En solo unos pasos podrás tener un asistente virtual adaptado a tu negocio, listo para trabajar 24/7 en nuestro servidor.</p>
+
+  <!-- Chat interactivo -->
+  <div id="agent-chat">
+    <div id="agent-chat-messages"></div>
+    <div id="agent-chat-input-area">
+      <input type="text" id="agent-chat-input" placeholder="Escribe tu respuesta...">
+      <button id="agent-chat-send">Enviar</button>
+    </div>
+  </div>
+
+  <!-- Botón de despliegue final -->
+  <button id="deploy-agent" style="display:none;" class="deploy-btn">Desplegar mi Agente</button>
+</section>
+
+<style>
+.create-agent {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background: #101820;
+  color: #fff;
+  border-radius: 12px;
+}
+.create-agent h2 {
+  color: #00ffc8;
+  margin-bottom: 10px;
+}
+#create-agent p {
+  margin-bottom: 15px;
+}
+#agent-chat {
+  border: 1px solid #00ffc8;
+  border-radius: 12px;
+  padding: 10px;
+  background: #1a1a1a;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+#agent-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.agent-msg {
+  color: #00ffc8;
+  margin-bottom: 8px;
+}
+.user-msg {
+  text-align: right;
+  color: #fff;
+  margin-bottom: 8px;
+}
+#agent-chat-input-area {
+  display: flex;
+  gap: 5px;
+}
+#agent-chat-input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #101820;
+  color: #fff;
+}
+#agent-chat-send {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: none;
+  background: #00ffc8;
+  color: #101820;
+  cursor: pointer;
+}
+.deploy-btn {
+  padding: 10px 20px;
+  background: #00ffc8;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+
+<script>
+const chatMessages = document.getElementById("agent-chat-messages");
+const chatInput = document.getElementById("agent-chat-input");
+const chatSend = document.getElementById("agent-chat-send");
+const deployBtn = document.getElementById("deploy-agent");
+
+let step = 0;
+let agentData = {};
+
+const steps = [
+  { question: "Hola! ¿Cómo quieres que se llame tu agente?", key: "name" },
+  { question: "¿Cuál es el sector o industria de tu negocio?", key: "industry" },
+  { 
+    question: "Selecciona las funciones del agente (escribe números separados por coma): 1) Atención a clientes, 2) Notificación de leads, 3) Publicaciones automáticas, 4) Gestión de citas, 5) Reportes automáticos", 
+    key: "functions",
+    parser: input => input.split(",").map(n => parseInt(n.trim()))
+  }
+];
+
+function addMessage(content, sender) {
+  const div = document.createElement("div");
+  div.textContent = content;
+  div.className = sender === "bot" ? "agent-msg" : "user-msg";
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function nextStep(input) {
+  if (step > 0) {
+    const parser = steps[step-1].parser || (x => x);
+    agentData[steps[step-1].key] = parser(input);
+  }
+
+  if (step < steps.length) {
+    addMessage(steps[step].question, "bot");
+    step++;
+  } else {
+    addMessage("¡Perfecto! Tu agente está listo para ser desplegado con los siguientes datos:", "bot");
+    addMessage(JSON.stringify(agentData, null, 2), "bot");
+    deployBtn.style.display = "block"; // muestra botón final
+  }
+}
+
+chatSend.addEventListener("click", () => {
+  const input = chatInput.value.trim();
+  if (!input) return;
+  addMessage(input, "user");
+  chatInput.value = "";
+  nextStep(input);
+});
+
+// Inicia el chat
+nextStep();
+
+// Acción de despliegue (simulación)
+deployBtn.addEventListener("click", () => {
+  alert("¡Tu agente ha sido desplegado exitosamente!");
+  // Aquí podrías llamar a tu API o VPS n8n para crear el agente automáticamente
+});
+</script>
