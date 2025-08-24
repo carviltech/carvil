@@ -7,16 +7,16 @@
   --primary-color: #3b82f6; /* Azul */
   --secondary-color: #e0e7ff;
   --accent-color: #22c55e;
-  --card-bg: rgba(249, 250, 251, 0.85); /* Blanco con transparencia */
+  --card-bg: rgba(249, 250, 251, 0.85);
 }
 
 body.dark {
   --bg-color: #121212;
   --text-color: #eee;
-  --primary-color: #60a5fa; /* Azul claro */
+  --primary-color: #60a5fa;
   --secondary-color: #1e1e1e;
   --accent-color: #22c55e;
-  --card-bg: rgba(41, 41, 61, 0.85); /* Azul oscuro con transparencia */
+  --card-bg: rgba(41, 41, 61, 0.85);
 }
 
 /* RESET Y BASE */
@@ -29,7 +29,7 @@ body.dark {
 
 body {
   font-family: 'Inter', sans-serif;
-  background: url('frentelocal.jpg') no-repeat center center fixed;
+  background: url('fondo.jpg') no-repeat center center fixed;
   background-size: cover;
   color: var(--text-color);
   line-height: 1.6;
@@ -39,7 +39,6 @@ body {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* Overlay para fondo con transparencia que cambia según tema */
 body::before {
   content: "";
   position: fixed;
@@ -169,26 +168,81 @@ h2, h3 {
 }
 
 /* TARJETAS */
-[class^="col"] {
+[class^="col"], .fullwidth .card {
   background-color: var(--card-bg);
   backdrop-filter: blur(5px);
   border-radius: 1rem;
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-[class^="col"]:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+[class^="col"]:hover, .fullwidth .card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 20px var(--primary-color);
 }
 
-section {
-  margin: 4rem 0;
+.icon-container {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.titulo-seccion {
-  font-size: 1.8rem;
+[class^="col"] h3, .fullwidth .card h3 {
+  text-align: center;
+}
+
+[class^="col"] p, .fullwidth .card p {
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+/* EFECTO DESTELLO */
+[class^="col"]::after, .fullwidth .card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.0) 100%);
+  transform: rotate(45deg) translate(-200%, -200%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+[class^="col"]:hover::after, .fullwidth .card:hover::after {
+  transform: rotate(45deg) translate(200%, 200%);
+}
+
+/* SECCIONES FULL WIDTH (Nosotros y Proyectos) */
+.fullwidth {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.fullwidth .card {
+  max-width: 1200px;
+  width: 90%;
+  padding: 2rem;
+  text-align: left;
+}
+
+/* LISTAS EN PROYECTOS */
+.fullwidth .card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.fullwidth .card ul li {
   margin-bottom: 1rem;
 }
 
@@ -240,7 +294,7 @@ form button {
 }
 
 form button:hover {
-  background-color: #2563eb; /* Azul un poco más oscuro */
+  background-color: #2563eb;
   animation: bounce 0.3s ease forwards;
 }
 
@@ -270,12 +324,8 @@ footer {
 
 /* ANIMACION BOUNCE */
 @keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 /* BOTON CREAR AGENTE */
@@ -289,7 +339,7 @@ footer {
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
-  color: #3b82f6; /* negro por defecto */
+  color: #3b82f6;
   background-color: rgba(255, 255, 255, 0.8);
   border: 2px solid #ffffff;
   border-radius: 8px;
@@ -306,7 +356,7 @@ footer {
 
 .btn-outline:active,
 .btn-outline:focus {
-  color: var(--primary-color); /* azul al seleccionar */
+  color: var(--primary-color);
   outline: none;
 }
 
@@ -440,4 +490,10 @@ footer {
     padding: 10px 20px;
     font-size: 14px;
   }
+
+  .fullwidth .card {
+    width: 95%;
+    padding: 1.5rem;
+  }
 }
+
