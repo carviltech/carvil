@@ -1,0 +1,830 @@
+{
+  "name": "BOT BUILDER",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=este es el mensaje del cliente {{ $('Webhook').item.json.body.message }}",
+        "options": {
+          "systemMessage": "=\nEres un Chatbot builder de CARVIL Techn, que cuenta con su propio VPS.\n\n🔹 REGLAS DE FUNCIONAMIENTO\n\n1- Haz solo una pregunta por mensaje.\n\n2- Dirígete al usuario por su username {{ $json.username }}.\n\n3- Si la respuesta es ambigua o no coincide con las opciones, reformula la pregunta con ejemplos claros.\n\n4- Usa opciones predefinidas cuando sea posible.\n\n5- Guarda cada respuesta inmediatamente en la variable JSON correspondiente.\n\n6- Nunca repitas preguntas ya respondidas, a menos que el usuario quiera cambiar algo.\n\n7- Mantén un tono profesional pero cercano.\n\n8- Redirige al objetivo si el usuario se desvía del tema, de forma amable.\n\n9- Si el usuario responde con números, entiendase como: 1 = primera opción, 2 = segunda opción y así sucesivamente.\n\n10- Al final, presenta un resumen de todas las variables y pide confirmación.\n\n11- Si el usuario aprueba, entrega el JSON final limpio y listo para usar.\n\n12- No necesitas explicarle al usuario las variables actualizadas y las faltantes, hazlo solo si el usuario te lo pide, son para tu funcionamiento.\n\n📋 VARIABLES A RECOLECTAR (omitidas \nhosting\nplatform\nintegrations_channels\napi_integrations\nestas se fijan automáticamente en esta version)\n\nchatbot_purpose**\nintegrations_channels\ntheme_colors\nbot_avatar\nwelcome_message\ntheme_mode\ninput_type\nerror_handling\nlanguage\ntone\nuse_emojis\nuse_username\nstore_history\nrecognize_recurrent\napi_integrations\nuse_nlp\nsentiment_analysis\nmultimedia_support\nuser_data_required\ndata_consent_message\nnotifications_enabled\nlog_conversations\nusage_metrics\nuser_feedback\noffline_message\n\n⚡ INSTRUCCIONES PARA LA SALIDA\n\nDevuelve siempre un objeto JSON con estas propiedades.\n\nAgrega \"chatbot_complete\": false mientras falten respuestas.\n\nAgrega \"chatbot_complete\" true Cuando todas las variables estén completadas y confirmadas, coloca \"chatbot_complete\": true, y avisale al usuario que se le enviara un mail a su casilla {{ $json.email }} para terminar de configurar su Chatbot y agradecele en nombre de CARVIL tech\n\nNunca envuelvas el JSON completo en un array, debe ser un objeto directo.\n\nSi estás esperando más respuestas, añade un campo \"next_question\" con el texto de la pregunta actual.\n\n📌 VALORES FIJOS AUTOMÁTICOS:\n\n\"platform\": \"web\",\n\"hosting\": \"CARVIL VPS\"\n\"integrations_channels: \"web\"\n📌 EJEMPLO DE SALIDA PARCIAL INICIAL:\n\n{\n  \"chatbot_purpose\": \"No especificado\",\n  \"integrations_channels\": [],\n  \"theme_colors\": \"No especificado\",\n  \"bot_avatar\": \"No especificado\",\n  \"welcome_message\": \"No especificado\",\n  \"theme_mode\": \"No especificado\",\n  \"input_type\": \"No especificado\",\n  \"error_handling\": \"No especificado\",\n  \"language\": \"No especificado\",\n  \"tone\": \"No especificado\",\n  \"use_emojis\": false,\n  \"use_username\": false,\n  \"store_history\": false,\n  \"recognize_recurrent\": false,\n  \"api_integrations\": [],\n  \"use_nlp\": false,\n  \"sentiment_analysis\": false,\n  \"multimedia_support\": false,\n  \"user_data_required\": [],\n  \"data_consent_message\": \"No especificado\",\n  \"notifications_enabled\": false,\n  \"log_conversations\": false,\n  \"usage_metrics\": false,\n  \"user_feedback\": false,\n  \"offline_message\": \"No especificado\",\n  \"platform\": \"web\",\n  \"hosting\": \"CARVIL VPS\",\n  \"chatbot_complete\": false,\n  \"next_question\": \"¿Para qué industria se va a desempeñar tu chatbot? (por ejemplo: clínica médica, inmobiliaria, peluquería, educación, comercio, otro)\"\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -5616,
+        816
+      ],
+      "id": "cbd54830-51b6-48c6-8433-906069ac6bbf",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        -5712,
+        1072
+      ],
+      "id": "8d0b082a-99e2-4e12-a481-18b151f31938",
+      "name": "Mistral Cloud Chat Model",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "IiG1yBw5FlTvrddz",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -3344,
+        1104
+      ],
+      "id": "782fc85e-0057-4e56-b753-57f7fc9192fe",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=SELECT *\nFROM chat_histories\nWHERE username = '{{$json[\"username\"]}}'\nORDER BY created_at DESC\nLIMIT 1;\n",
+        "tableName": ""
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -5568,
+        1072
+      ],
+      "id": "1234115f-491f-4cb0-ae63-802a0d722626",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "x6q38JAWRsZERCiS",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "24ea51ff-fe0e-4a91-a6c1-e5784a76eb71",
+              "name": "username",
+              "value": "={{ $('Execute a SQL query').item.json.username }}",
+              "type": "string"
+            },
+            {
+              "id": "87b6f791-0280-464d-a8ef-74c42dad49bc",
+              "name": "message",
+              "value": "={{ $('Webhook').item.json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "7430c6b3-cb50-4a05-a6ed-ccfce298c1ff",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6048,
+        816
+      ],
+      "id": "a0e0c40c-520a-45ce-9aaf-c1d57a6054ab",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "langchain_chat_histories",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "username",
+              "condition": "eq",
+              "keyValue": "={{ $json.username }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -5840,
+        816
+      ],
+      "id": "4bdd0f70-3bb3-4eeb-82ea-3454f66fb19a",
+      "name": "Get many rows",
+      "credentials": {
+        "supabaseApi": {
+          "id": "pNufZdn1HXgJ3BhB",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT username\nFROM langchain_chat_histories\nWHERE session_id = ''\nORDER BY id DESC\nLIMIT 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -6384,
+        560
+      ],
+      "id": "84d55af6-66c7-4a28-8ac6-3e5a68f88953",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "x6q38JAWRsZERCiS",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileName": "/data/uploads/{{ $binary.data.fileName }}",
+        "options": {}
+      },
+      "name": "Write Binary File",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [
+        -6240,
+        1088
+      ],
+      "id": "7957900f-38eb-42d6-bcc4-69da6951cad4"
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{\n  json: {\n    reply: `📁 Archivo \"${$binary.data.fileName}\" recibido correctamente`,\n    status: \"ok\"\n  }\n}];"
+      },
+      "name": "Function - Respuesta",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -6000,
+        1088
+      ],
+      "id": "c3452e56-6b25-4241-ad73-f021ce27b656"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{ Object.keys($binary).length > 0 }}\n",
+              "value2": "true"
+            }
+          ]
+        }
+      },
+      "name": "IF - Es archivo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -6560,
+        928
+      ],
+      "id": "5e5b6406-f514-4cfd-a82e-aa136d9beab8"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "test",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -6816,
+        928
+      ],
+      "id": "bcd46288-2d1b-4745-b8b5-8f95d82c75d1",
+      "name": "Webhook",
+      "webhookId": "9b5922c8-3224-4b0a-97c0-1ff0d627630c"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.chatbot_complete }}",
+              "value2": "={{ true }}"
+            }
+          ]
+        }
+      },
+      "name": "IF Node: Check if Complete",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -4768,
+        512
+      ],
+      "id": "8f167efd-61c5-42c0-8cdb-1b37fa6004dc"
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { reply: $json.output || '🤖 No hay respuesta del AI.', status: 'ups! Houston tenemos un problema' } }];"
+      },
+      "name": "Response AI1",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -4528,
+        1088
+      ],
+      "id": "998b47a8-2827-4292-8492-e40481a8bc8c"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputText = $json[\"raw_output\"] || $json[\"output\"];\n\n// Extraemos el bloque JSON delimitado por ```json ... ```\nconst jsonMatch = inputText.match(/```json([\\s\\S]*?)```/);\n\nlet result = {};\n\nif (jsonMatch && jsonMatch[1]) {\n  let jsonText = jsonMatch[1].trim();\n\n  // Limpiar posibles comas finales antes de cerrar } o ]\n  jsonText = jsonText.replace(/,\\s*([\\]}])/g, '$1');\n\n  try {\n    // Parseamos el JSON limpio\n    const chatbotJSON = JSON.parse(jsonText);\n    result = chatbotJSON;\n  } catch (err) {\n    console.warn(\"JSON.parse falló, usando extracción por regex como fallback.\");\n\n    // Regex para capturar \"clave\": valor simple\n    const regex = /\"([^\"]+)\"\\s*:\\s*(true|false|null|\"(?:[^\"\\\\]|\\\\.)*\"|\\[[^\\]]*\\]|\\{[^\\}]*\\}|-?\\d+(\\.\\d+)?)/gi;\n    let match;\n    while ((match = regex.exec(jsonText)) !== null) {\n      let key = match[1];\n      let value = match[2].trim();\n\n      // Convertimos valores a su tipo real\n      if (value === \"true\") value = true;\n      else if (value === \"false\") value = false;\n      else if (value === \"null\") value = null;\n      else if (/^\\d+(\\.\\d+)?$/.test(value)) value = Number(value);\n      else if (/^\\[.*\\]$/.test(value)) {\n        try { value = JSON.parse(value); } catch { value = value; }\n      }\n      else if (/^\".*\"$/.test(value)) {\n        value = value.slice(1, -1); // quitamos comillas\n      }\n\n      result[key] = value;\n    }\n  }\n}\n\n// Retornamos todas las variables al siguiente nodo\nreturn [\n  {\n    json: result\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5168,
+        640
+      ],
+      "id": "18ad9a69-1a6d-45a8-8e00-c98d1bf58e3a",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "tableId": "chatbots",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "chatbot_purpose",
+              "fieldValue": "={{ $('Code2').item.json.chatbot_purpose }}"
+            },
+            {
+              "fieldId": "integrations_channels",
+              "fieldValue": "={{ $('Code2').item.json.integrations_channels }}"
+            },
+            {
+              "fieldId": "theme_colors",
+              "fieldValue": "={{ $('Code2').item.json.theme_colors }}"
+            },
+            {
+              "fieldId": "bot_avatar",
+              "fieldValue": "={{ $('Code2').item.json.bot_avatar }}"
+            },
+            {
+              "fieldId": "welcome_message",
+              "fieldValue": "={{ $('Code2').item.json.welcome_message }}"
+            },
+            {
+              "fieldId": "input_type",
+              "fieldValue": "={{ $('Code2').item.json.input_type }}"
+            },
+            {
+              "fieldId": "error_handling",
+              "fieldValue": "={{ $('Code2').item.json.error_handling }}"
+            },
+            {
+              "fieldId": "language",
+              "fieldValue": "={{ $('Code2').item.json.language }}"
+            },
+            {
+              "fieldId": "tone",
+              "fieldValue": "={{ $('Code2').item.json.tone }}"
+            },
+            {
+              "fieldId": "use_emojis",
+              "fieldValue": "={{ $('Code2').item.json.use_emojis }}"
+            },
+            {
+              "fieldId": "use_username",
+              "fieldValue": "={{ $('Code2').item.json.use_username }}"
+            },
+            {
+              "fieldId": "store_history",
+              "fieldValue": "={{ $('Code2').item.json.store_history }}"
+            },
+            {
+              "fieldId": "recognize_recurrent",
+              "fieldValue": "={{ $('Code2').item.json.recognize_recurrent }}"
+            },
+            {
+              "fieldId": "api_integrations",
+              "fieldValue": "={{ $('Code2').item.json.api_integrations }}"
+            },
+            {
+              "fieldId": "use_nlp",
+              "fieldValue": "={{ $('Code2').item.json.use_nlp }}"
+            },
+            {
+              "fieldId": "sentiment_analysis",
+              "fieldValue": "={{ $('Code2').item.json.sentiment_analysis }}"
+            },
+            {
+              "fieldId": "multimedia_support",
+              "fieldValue": "={{ $('Code2').item.json.multimedia_support }}"
+            },
+            {
+              "fieldId": "user_data_requires",
+              "fieldValue": "={{ $('Code2').item.json.user_data_requires }}"
+            },
+            {
+              "fieldId": "data_consent_message",
+              "fieldValue": "={{ $('Code2').item.json.data_consent_message }}"
+            },
+            {
+              "fieldId": "notifications_enabled",
+              "fieldValue": "={{ $('Code2').item.json.notifications_enabled }}"
+            },
+            {
+              "fieldId": "log_conversations",
+              "fieldValue": "={{ $('Code2').item.json.log_conversations }}"
+            },
+            {
+              "fieldId": "usage_metrics",
+              "fieldValue": "={{ $('Code2').item.json.usage_metrics }}"
+            },
+            {
+              "fieldId": "user_feedback",
+              "fieldValue": "={{ $('Code2').item.json.user_feedback }}"
+            },
+            {
+              "fieldId": "platform",
+              "fieldValue": "={{ $('Code2').item.json.platform }}"
+            },
+            {
+              "fieldId": "offline_message",
+              "fieldValue": "={{ $('Code2').item.json.offline_message }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -4176,
+        352
+      ],
+      "id": "ab55430f-1df7-48a0-ab33-9096f75381b1",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "pNufZdn1HXgJ3BhB",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node: Code1\n// JSON listo para Supabase con conversión \"sí\"/\"no\" a boolean y UUID\n\nconst generateUUID = () =>\n  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {\n    const r = (Math.random() * 16) | 0;\n    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);\n  });\n\n// Función helper para convertir \"sí\"/\"no\" a boolean\nconst toBoolean = value => {\n  if (typeof value === 'string') {\n    value = value.trim().toLowerCase();\n    if (value === 'sí' || value === 'si' || value === 'true') return true;\n    if (value === 'no' || value === 'false') return false;\n  }\n  return Boolean(value);\n};\n\nreturn [{\n  json: {\n    id: generateUUID(),\n    chatbot_purpose:        $json.chatbot_purpose        || \"\",\n    integrations_channels:  $json.integrations_channels  || \"\",\n    theme_colors:           $json.theme_colors           || \"\",\n    bot_avatar:             $json.bot_avatar             || \"\",\n    language:               $json.language               || \"\",\n    tone:                   $json.tone                   || \"\",\n    use_emojis:             toBoolean($json.use_emojis),\n    use_username:           toBoolean($json.use_username),\n    recognize_recurrent:    toBoolean($json.recognize_recurrent),\n    identify_user:          $json.identify_user          || \"\",\n    api_integrations:       $json.api_integrations       || \"\",\n    use_nlp:                toBoolean($json.use_nlp),\n    sentiment_analysis:     toBoolean($json.sentiment_analysis),\n    multimedia_support:     toBoolean($json.multimedia_support),\n    offline_message:        $json.offline_message        || \"\",\n    data_consent_message:   $json.data_consent_message   || \"\",\n    log_conversations:      toBoolean($json.log_conversations),\n    usage_metrics:          toBoolean($json.usage_metrics),\n    user_feedback:          toBoolean($json.user_feedback),\n    chatbot_complete:       toBoolean($json.chatbot_complete),\n    store_history:          toBoolean($json.store_history),\n    welcome_message:        $json.welcome_message        || \"\",\n    input_type:             $json.input_type             || \"\",\n    error_handling:         $json.error_handling         || \"\",\n    user_data_requires:     $json.user_data_requires     || \"\",\n    notifications_enabled:  toBoolean($json.notifications_enabled),\n    platform:               $json.platform               || \"\"\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4496,
+        352
+      ],
+      "id": "5897d8ca-97c4-404d-bd76-22338325bb61",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Función para generar UUID v4\nfunction generateUUID() {\n  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {\n    const r = (Math.random() * 16) | 0;\n    const v = c === 'x' ? r : (r & 0x3 | 0x8);\n    return v.toString(16);\n  });\n}\n\n// Generar el ID\nconst id = generateUUID();\n\n// Retornar en formato n8n\nreturn [\n  {\n    json: {\n      id: id\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6176,
+        560
+      ],
+      "id": "3735cc32-cbe5-4e4d-a690-6eb11f743bb9",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "langchain_chat_histories"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -4336,
+        352
+      ],
+      "id": "b1678624-e709-440d-aa69-364fc0d0fc2a",
+      "name": "Get many rows1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "pNufZdn1HXgJ3BhB",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Variables dinámicas del agente desde nodos anteriores\nconst username = $('Execute a SQL query').first().json.username || \"Usuario\";\nconst welcomeMessage = $('Code2').first().json.welcome_message || \"Bienvenido al chatbot\";\nconst offlineMessage = $('Code2').first().json.offline_message || \"Disculpa, por el momento no podemos ayudarte\";\nconst dataConsentMessage = $('Code2').first().json.data_consent_message || \"\";\nconst inputType = $('Code2').first().json.input_type || \"texto\";\nconst multimediaSupport = $('Code2').first().json.multimedia_support || false;\nconst sentimentAnalysis = $('Code2').first().json.sentiment_analysis || false;\nconst storeHistory = $('Code2').first().json.store_history || false;\nconst themeColors = $('Code2').first().json.theme_colors || \"#007bff\";\nconst botAvatar = $('Code2').first().json.bot_avatar || \"🤖\";\nconst errorHandling = $('Code2').first().json.error_handling || \"ignorar_sin_notificacion\";\nconst userDataRequires = $('Code2').first().json.user_data_requires || \"\";\nconst notificationsEnabled = $('Code2').first().json.notifications_enabled || true;\nconst platform = $('Code2').first().json.platform || \"No especificado\";\nconst createdAt = $('Code2').first().json.created_at || new Date().toISOString();\n\n// Generamos el HTML\nconst html = `\n<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Chatbot de ${username}</title>\n<style>\n  body { font-family: Arial, sans-serif; margin:0; background:#fff; }\n  #chat-toggle { position: fixed; bottom:20px; right:20px; width:60px; height:60px; background:${themeColors}; border-radius:50%; display:flex; justify-content:center; align-items:center; cursor:pointer; color:#fff; font-size:24px; box-shadow:0 4px 10px rgba(0,0,0,0.3); transition:transform 0.2s; }\n  #chat-toggle:hover { transform: scale(1.1); }\n  #chat-toggle::before { content:\"${botAvatar}\"; }\n  #chat-window { position: fixed; bottom:90px; right:20px; width:90%; max-width:360px; max-height:500px; background:#fff; border-radius:12px; display:none; flex-direction:column; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.3); }\n  #chat-window.open { display:flex; }\n  #chat-header { background:${themeColors}; color:#fff; padding:12px; font-weight:bold; }\n  #chat-messages { flex:1; padding:10px; overflow-y:auto; }\n  #chat-input-area { display:flex; border-top:1px solid #ccc; }\n  #chat-input { flex:1; padding:8px; border:none; outline:none; }\n  #chat-send { padding:8px 12px; background:${themeColors}; color:#fff; border:none; cursor:pointer; }\n  .msg { margin-bottom:6px; opacity:0; animation: appear 0.3s forwards; }\n  .bot-msg { color:${themeColors}; }\n  .user-msg { color:#333; }\n  .typing { font-style:italic; color:gray; }\n  .notification { font-size:12px; color:orange; margin-bottom:5px; }\n  @keyframes appear { from {opacity:0; transform:translateY(5px);} to {opacity:1; transform:translateY(0);} }\n</style>\n</head>\n<body>\n<div id=\"chat-toggle\"></div>\n<div id=\"chat-window\">\n  <div id=\"chat-header\">${botAvatar} ${username} Chatbot</div>\n  <div id=\"chat-messages\"></div>\n  <div id=\"chat-input-area\">\n    <input type=\"text\" id=\"chat-input\" placeholder=\"Escribe un mensaje...\" />\n    <button id=\"chat-send\">Enviar</button>\n  </div>\n</div>\n\n<script>\nconst WELCOME_MSG = \\`${welcomeMessage}\\`;\nconst OFFLINE_MSG = \\`${offlineMessage}\\`;\nconst DATA_CONSENT_MSG = \\`${dataConsentMessage}\\`;\nconst INPUT_TYPE = \\`${inputType}\\`;\nconst MULTIMEDIA_SUPPORT = ${multimediaSupport};\nconst SENTIMENT_ANALYSIS = ${sentimentAnalysis};\nconst STORE_HISTORY = ${storeHistory};\nconst ERROR_HANDLING = \\`${errorHandling}\\`;\nconst USER_DATA_REQUIRES = \\`${userDataRequires}\\`;\nconst NOTIFICATIONS_ENABLED = ${notificationsEnabled};\nconst PLATFORM = \\`${platform}\\`;\nconst CREATED_AT = \\`${createdAt}\\`;\n\nconst toggleBtn = document.getElementById('chat-toggle');\nconst chatWindow = document.getElementById('chat-window');\nconst messages = document.getElementById('chat-messages');\nconst input = document.getElementById('chat-input');\nconst sendBtn = document.getElementById('chat-send');\n\ntoggleBtn.addEventListener('click', () => {\n  chatWindow.classList.toggle('open');\n  if(chatWindow.classList.contains('open') && messages.childElementCount===0){\n    addMessage('Bot', WELCOME_MSG, true);\n  }\n});\n\nsendBtn.addEventListener('click', sendMessage);\ninput.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });\n\nfunction sendMessage() {\n  const text = input.value.trim();\n  if(!text) return;\n  addMessage('Tú', text, false);\n  input.value='';\n\n  const typingIndicator = document.createElement('div');\n  typingIndicator.classList.add('typing');\n  typingIndicator.textContent='Bot está escribiendo...';\n  messages.appendChild(typingIndicator);\n  messages.scrollTop = messages.scrollHeight;\n\n  fetch('https://tuwebhook', {\n    method:'POST',\n    headers:{'Content-Type':'application/json'},\n    body: JSON.stringify({\n      message:text,\n      input_type: INPUT_TYPE,\n      multimedia_support: MULTIMEDIA_SUPPORT,\n      sentiment_analysis: SENTIMENT_ANALYSIS,\n      data_consent_message: DATA_CONSENT_MSG,\n      store_history: STORE_HISTORY,\n      error_handling: ERROR_HANDLING,\n      user_data_requires: USER_DATA_REQUIRES,\n      notifications_enabled: NOTIFICATIONS_ENABLED,\n      platform: PLATFORM,\n      created_at: CREATED_AT\n    })\n  }).then(res=>res.json())\n    .then(data => { typingIndicator.remove(); addMessage('Bot', data.reply || OFFLINE_MSG, true); })\n    .catch(()=>{ typingIndicator.remove(); addMessage('Bot', OFFLINE_MSG, true); });\n}\n\nfunction addMessage(sender,text,isBot=true){\n  const msg=document.createElement('div');\n  msg.classList.add('msg',isBot?'bot-msg':'user-msg');\n  msg.innerHTML='<strong>'+(isBot?'Bot':sender)+':</strong> '+text;\n  messages.appendChild(msg);\n  messages.scrollTop=messages.scrollHeight;\n}\n</script>\n</body>\n</html>\n`;\n\n// Salida para n8n\nreturn [\n  { json: { html } }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2864,
+        496
+      ],
+      "id": "e7c65a2b-7cdd-4e55-8a9d-3263961b6a4f",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Tomamos el array completo del nodo anterior\nconst prevItems = $('Code2').items || [];\n\n// Accedemos al primer objeto y su propiedad html\nconst rawHTML = prevItems[0]?.html || '';\n\n// Limpiamos saltos de línea y comillas escapadas\nconst cleanHTML = rawHTML\n  .replace(/\\\\n/g, \"\\n\")\n  .replace(/\\\\\"/g, '\"')\n  .replace(/\\\\'/g, \"'\");\n\n// Retornamos HTML limpio\nreturn [\n  {\n    json: {\n      html: cleanHTML\n    }\n  }\n];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3568,
+        -128
+      ],
+      "id": "0c832723-f496-462d-aa82-fe7067c383e9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputText = $json[\"output\"];\n\n// Buscamos el valor de chatbot_complete en el texto\nconst match = inputText.match(/\"chatbot_complete\"\\s*:\\s*(true|false)/i);\n\nlet chatbot_complete = false;\n\nif (match) {\n  chatbot_complete = match[1].toLowerCase() === \"true\";\n}\n\n// Retornamos solo la variable al siguiente nodo\nreturn [\n  {\n    json: {\n      chatbot_complete\n    }\n  }\n];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5184,
+        208
+      ],
+      "id": "d93351d4-af11-4b68-b85c-4afed14626ad",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Asegúrate de poner exactamente el nombre de tu nodo anterior\nconst prevNode = $node[\"NombreExactoDelNodo\"].json;\n\n// Tomamos el HTML\nlet rawHTML = prevNode.html || '';\n\n// Limpiamos saltos de línea y comillas escapadas\nlet cleanHTML = rawHTML\n  .replace(/\\\\n/g, \"\\n\")\n  .replace(/\\\\\"/g, '\"')\n  .replace(/\\\\'/g, \"'\")\n  .trim();\n\n// Retornamos el HTML limpio\nreturn [\n  {\n    json: {\n      html: cleanHTML\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3888,
+        -144
+      ],
+      "id": "de53d7b9-2a10-4bcc-86ad-2a87438b2e30",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Chatbot Demo</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      margin: 0;\n      background: #f9f9f9;\n    }\n\n    /* Botón flotante */\n    #chat-toggle {\n      position: fixed;\n      bottom: 20px;\n      right: 20px;\n      background: var(--primary-color, #007bff);\n      color: #fff;\n      border: none;\n      border-radius: 50%;\n      width: 60px;\n      height: 60px;\n      cursor: pointer;\n      box-shadow: 0 4px 6px rgba(0,0,0,0.2);\n      font-size: 24px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n\n    /* Ventana del chat */\n    #chat-container {\n      position: fixed;\n      bottom: 90px;\n      right: 20px;\n      width: 320px;\n      height: 460px;\n      background: var(--theme-bg, #fff);\n      border-radius: 12px;\n      box-shadow: 0 4px 10px rgba(0,0,0,0.2);\n      display: none;\n      flex-direction: column;\n      overflow: hidden;\n    }\n\n    #chat-header {\n      background: var(--primary-color, #007bff);\n      color: #fff;\n      padding: 12px;\n      text-align: center;\n      font-weight: bold;\n    }\n\n    #chat-body {\n      flex: 1;\n      padding: 10px;\n      overflow-y: auto;\n      font-size: 14px;\n      background: #fafafa;\n      display: flex;\n      flex-direction: column;\n    }\n\n    .bot-message, .user-message {\n      margin: 8px 0;\n      padding: 8px 12px;\n      border-radius: 10px;\n      max-width: 80%;\n    }\n\n    .bot-message {\n      background: #e1f5fe;\n      align-self: flex-start;\n    }\n\n    .user-message {\n      background: #c8e6c9;\n      align-self: flex-end;\n    }\n\n    #chat-footer {\n      display: flex;\n      padding: 10px;\n      border-top: 1px solid #ddd;\n      background: #fff;\n    }\n\n    #chat-input {\n      flex: 1;\n      padding: 8px;\n      border: 1px solid #ccc;\n      border-radius: 8px;\n      font-size: 14px;\n    }\n\n    #send-btn {\n      margin-left: 8px;\n      padding: 8px 14px;\n      background: var(--primary-color, #007bff);\n      border: none;\n      border-radius: 8px;\n      color: #fff;\n      cursor: pointer;\n    }\n\n    #offline-banner {\n      display: none;\n      background: #ffebee;\n      color: #c62828;\n      padding: 6px;\n      text-align: center;\n      font-size: 12px;\n    }\n\n    #feedback {\n      display: none;\n      padding: 8px;\n      text-align: center;\n      border-top: 1px solid #ddd;\n    }\n\n    #feedback button {\n      margin: 0 5px;\n      padding: 6px 10px;\n      border: none;\n      border-radius: 6px;\n      cursor: pointer;\n    }\n\n    .btn-yes { background: #4caf50; color: #fff; }\n    .btn-no { background: #f44336; color: #fff; }\n  </style>\n</head>\n<body>\n\n  <!-- Botón flotante -->\n  <button id=\"chat-toggle\">{{ $json.bot_avatar }}</button>\n\n  <!-- Contenedor del Chat -->\n  <div id=\"chat-container\">\n    <div id=\"chat-header\">\n      {{ $json.bot_avatar }} {{ $json.chatbot_purpose }}\n    </div>\n    <div id=\"offline-banner\">{{ $json.offline_message }}</div>\n    <div id=\"chat-body\">\n      <div class=\"bot-message\">{{ $json.welcome_message }}</div>\n    </div>\n    <div id=\"chat-footer\">\n      <input type=\"text\" id=\"chat-input\" placeholder=\"Escribe un mensaje...\" />\n      <button id=\"send-btn\">➤</button>\n    </div>\n    <div id=\"feedback\">\n      <p>{{ $json.user_feedback }}</p>\n      <button class=\"btn-yes\">👍</button>\n      <button class=\"btn-no\">👎</button>\n    </div>\n  </div>\n\n  <script>\n    const chatToggle = document.getElementById(\"chat-toggle\");\n    const chatContainer = document.getElementById(\"chat-container\");\n    const sendBtn = document.getElementById(\"send-btn\");\n    const chatInput = document.getElementById(\"chat-input\");\n    const chatBody = document.getElementById(\"chat-body\");\n    const offlineBanner = document.getElementById(\"offline-banner\");\n    const feedback = document.getElementById(\"feedback\");\n\n    // Variables dinámicas inyectadas desde n8n\n    const chatbotComplete = {{ $json.chatbot_complete }};\n    const logConversations = {{ $json.log_conversations }};\n    const showFeedback = {{ $json.user_feedback ? \"true\" : \"false\" }};\n\n    // Mostrar/Ocultar chat\n    chatToggle.addEventListener(\"click\", () => {\n      chatContainer.style.display =\n        chatContainer.style.display === \"flex\" ? \"none\" : \"flex\";\n    });\n\n    // Si el chatbot está marcado como incompleto, mostrar banner offline\n    if (!chatbotComplete) {\n      offlineBanner.style.display = \"block\";\n    }\n\n    // Mostrar feedback al cerrar conversación\n    if (showFeedback) {\n      feedback.style.display = \"block\";\n    }\n\n    // Enviar mensaje\n    sendBtn.addEventListener(\"click\", sendMessage);\n    chatInput.addEventListener(\"keypress\", (e) => {\n      if (e.key === \"Enter\") sendMessage();\n    });\n\n    function sendMessage() {\n      const message = chatInput.value.trim();\n      if (!message) return;\n\n      // Mostrar mensaje del usuario\n      const userMsg = document.createElement(\"div\");\n      userMsg.className = \"user-message\";\n      userMsg.textContent = message;\n      chatBody.appendChild(userMsg);\n\n      // Respuesta automática (demo)\n      const botMsg = document.createElement(\"div\");\n      botMsg.className = \"bot-message\";\n      botMsg.textContent = \"Has dicho: \" + message;\n      chatBody.appendChild(botMsg);\n\n      chatInput.value = \"\";\n      chatBody.scrollTop = chatBody.scrollHeight;\n\n      // Registrar logs si está habilitado\n      if (logConversations) {\n        console.log(\"Log:\", { user: message, bot: botMsg.textContent });\n      }\n    }\n  </script>\n</body>\n</html>\n"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -3264,
+        -176
+      ],
+      "id": "e3c4d071-d65d-41f4-8939-bf945c9ec99d",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "operation": "html",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -2672,
+        496
+      ],
+      "id": "379cebdd-19b7-4032-8548-b983fd674adc",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=tu funcion es a partir de esta variable {{ $json.theme_colors }} pasarla en formato Hex cada uno por su parte\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -3184,
+        432
+      ],
+      "id": "bff48a2f-b39a-41c3-a5dc-8b6041f80b3d",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        -3136,
+        672
+      ],
+      "id": "d30842b9-6ec5-4ad3-a31f-a00282634df0",
+      "name": "Mistral Cloud Chat Model1",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "IiG1yBw5FlTvrddz",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3968,
+        352
+      ],
+      "id": "63d9b1cc-97a8-4f68-aa82-321070436516",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Mistral Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Response AI1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Binary File": {
+      "main": [
+        [
+          {
+            "node": "Function - Respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Function - Respuesta": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Es archivo?": {
+      "main": [
+        [
+          {
+            "node": "Write Binary File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "IF - Es archivo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Node: Check if Complete": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response AI1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "IF Node: Check if Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Get many rows1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows1": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e0403973-76e8-414a-aeb4-58c7ce829eb2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4afc8aaec3ba15f2f80f341fb39c85ddc14ff6634e7f31534cee913b118b0c82"
+  },
+  "id": "83m1usVKNID8x9xg",
+  "tags": [
+    {
+      "createdAt": "2025-08-24T21:08:06.889Z",
+      "updatedAt": "2025-08-24T21:08:06.889Z",
+      "id": "oMXkdTSgzhfvhm5k",
+      "name": "CLINICA"
+    },
+    {
+      "createdAt": "2025-08-24T21:08:06.952Z",
+      "updatedAt": "2025-08-24T21:08:06.952Z",
+      "id": "oO7O8YjMvA5bPT3W",
+      "name": "template"
+    },
+    {
+      "createdAt": "2025-08-24T21:08:06.964Z",
+      "updatedAt": "2025-08-24T21:08:06.964Z",
+      "id": "5tdkzqqqzQg9kHzj",
+      "name": "newsletter"
+    },
+    {
+      "createdAt": "2025-08-24T21:08:06.967Z",
+      "updatedAt": "2025-08-24T21:08:06.967Z",
+      "id": "B9jK6tdnY81FjCid",
+      "name": "1node"
+    }
+  ]
+}
