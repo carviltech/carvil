@@ -1,0 +1,1105 @@
+{
+  "name": "CARVILBOT",
+  "nodes": [
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $today }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -2016,
+        -416
+      ],
+      "id": "0b9473eb-c894-478e-86ea-96b0d4909d6d",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "0m4OSOxCQ9RfCPNh",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        -3096,
+        -416
+      ],
+      "id": "ab3315da-d483-44f1-9f5f-ba29ec9dfc5c",
+      "name": "Mistral Cloud Chat Model",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "DoV1l0tGmaIP4tJG",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "guardar-cita",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "483dc0cc-aa50-4647-a8dd-9cf15ebfa327",
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -3392,
+        -640
+      ],
+      "webhookId": "uuid-agente-citas"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extraé del siguiente texto los datos del cliente.  \nDevolvé exclusivamente un objeto JSON válido, sin texto adicional, con estas claves:  \n\"nombre\", \"apellido\", \"email\", \"telefono\", \"fecha_evento\".  \n\nSi no encontrás algún dato, usá null.  \n\nEjemplo de formato esperado:  \n{\n  \"nombre\": \"\",\n  \"apellido\": \"\",\n  \"email\": \"\",\n  \"telefono\": \"\",\n  \"fecha_evento\": \"\"\n}\n\nLa clave \"fecha_evento\" debe calcularse siguiendo estas instrucciones:  \n\n## ROL\n- Actúa como un asistente experto en transformación de fechas, con el objetivo de convertir un día y una hora en un string de fecha en formato ISO 8601 como este:\n2025-09-21T15:00:00.000Z\n- Eres preciso, rápido y confiable. Tu única tarea es entregar el formato correcto sin errores.  \n- La fecha actual y hora actuales son: {{ $now }} (UTC).\n\n## TAREAS\n1. Brindar el ISO UTC basándose en la zona horaria de America/Cancun y los dos datos extraídos: Día y hora.  \n2. Une ambos datos \"Día\" y \"Hora\" en un string ISO UTC con el formato:\nYYYY-MM-DDTHH:MM:00.000Z  \n3. Si la fecha y hora extraídas representan un momento anterior a la fecha actual {{ $now }}, entonces \"fecha_evento\" será null (no se devuelve fechas pasadas).  \n\n## ESPECIFICACIONES\n- Si no se encuentra la fecha y hora, o si la fecha/hora calculada es pasada respecto a {{ $now }}, \"fecha_evento\" será null.  \n- La zona horaria usada para la conversión es America/Cancun.  \n- No agregues espacios, comentarios ni otro texto fuera del JSON final.  \n\n## EJEMPLOS\n- Ejemplo 1  \nInput: Día: 2025-08-25, Hora: 15:00  \nOutput en \"fecha_evento\": \"2025-08-25T20:00:00.000Z\"  \n\n- Ejemplo 2  \nInput: Día: 3 de mayo del 2025, Hora: 9:30 AM  \nOutput en \"fecha_evento\": \"2025-05-03T14:30:00.000Z\"  \n\n- Ejemplo 3  \nInput: Día: 10 de junio del 2025, Hora: 6:45 pm  \nOutput en \"fecha_evento\": \"2025-06-10T23:45:00.000Z\"  \n\n- Ejemplo 4  \nInput: Día y hora anteriores a la fecha actual ({{ $now }})  \nOutput en \"fecha_evento\": null  \n\nTexto del cliente:\n\"\"\"\n{{ $('Webhook1').item.json.body.message }}\n\"\"\"\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -3168,
+        -640
+      ],
+      "id": "480f939a-b723-48e8-b65b-47e6474f5462",
+      "name": "empresa"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cal.com/v2/bookings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer cal_live_c78d0eeee19398feadf962a10aca0f1e"
+            },
+            {
+              "name": "cal-api-version",
+              "value": "2024-08-13"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"start\": \"{{ $('Code').item.json.start }}\",\n  \"eventTypeId\": 3151562,\n  \"attendee\": {\n    \"name\": \"{{ $('Code').item.json.attendee.name }}\",\n    \"email\": \"{{ $('Code').item.json.attendee.email }}\",\n   \"timeZone\": \"America/Mendoza\",\n\"language\": \"es\"\n  },\n  \"bookingFieldsResponses\": {\n    \"Telefono\": \"{{ $('Code').item.json.attendee.phoneNumber }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -688,
+        -640
+      ],
+      "id": "cbae8f16-4b61-41a2-b653-f71d009dc5a7",
+      "name": "Booking"
+    },
+    {
+      "parameters": {
+        "name": "Agendar",
+        "description": "=Utiliza esta herramienta para agendar para un determinado tipo de evento. Siempre consulta el ID del evento y todo lo necesario antes de utilizar esta herramienta. La herramienta devuelve los horarios en UTC, convierte al horario de la zona horaria del usuario antes de agendar.\n\n# Especificaciones\n- Debes enviarle a esta herramienta cinco datos minimos el nombre, el correo, numero, el dia especifico y la hora especifica en formato de 24 horas.\n- No envies la zona horaria, solo los cinco datos mínimos especificados.\n- La hora que envías es la equivalente a nuestros horarios de cancun de 9:00 a 17:00.\n- Si el usuario es de otra zona horaria que no sea cancun puedes convertirla a hora cancun antes de enviar la información.\n- Cada elemento debes separarlo con una coma \",\"\n\n# Ejemplos\n1. Abelardo pinto, abc@gmail.com, +5222252011, 15 de mayo del 2025, 17:00\n2. Juan zarate, jzarate@gmail.com, +5162252011, 21 de noviembre del 2025, 14:00",
+        "workflowId": {
+          "__rl": true,
+          "value": "GE3Bj6nYMHeqhg1N",
+          "mode": "list",
+          "cachedResultName": "AgendarCal_YT"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        -1136,
+        -288
+      ],
+      "id": "59280990-ea6e-4e6f-baf1-b55e79d8624f",
+      "name": "Agendar"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n    let data = item.json;\n\n    // Si los datos vienen en text\n    if (data.text) {\n        try {\n            data = JSON.parse(data.text);\n        } catch(e) {\n            data = {};\n        }\n    }\n\n    const nombre = (data.nombre ?? \"\").toString().trim();\n    const apellido = (data.apellido ?? \"\").toString().trim();\n    const email = (data.email ?? \"\").toString().trim();\n    const telefono = (data.telefono ?? \"\").toString().trim();\n    const fecha_cita = data.fecha_evento ?? null;\n\n    let nombre_completo = \"_\";\n    if (nombre || apellido) {\n        nombre_completo = `${nombre}${apellido ? '_' + apellido : ''}`.toLowerCase();\n    }\n\n    return {\n        json: {\n            nombre_completo,\n            nombre,\n            apellido,\n            email,\n            telefono,\n            fecha_cita\n        }\n    };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2816,
+        -640
+      ],
+      "id": "07386c8d-ce5c-4c0d-ac95-beeb7ad85787",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -912,
+        -640
+      ],
+      "id": "af680535-6fcc-46c8-96d9-978f7c6d8faf",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1229b62f-be05-49c6-8973-1b44dea2da88",
+              "name": "=reply",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1136,
+        -640
+      ],
+      "id": "173acc0e-09c6-4582-9918-66baa4e274d4",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        -2144,
+        -416
+      ],
+      "id": "7f94077c-3e72-4429-9465-9c275cc4d5c7",
+      "name": "Mistral Cloud Chat Model3",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "DoV1l0tGmaIP4tJG",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook1').item.json.body.message }}",
+        "options": {
+          "systemMessage": "🤖 Prompt actualizado: CARVILBot\n\nEres CARVILBot, un asistente ejecutivo inteligente de CARVIL Technology Solutions.\n\nOBJETIVO PRINCIPAL\n\nCoordinar citas con potenciales clientes, mantener un trato profesional y recopilar la información necesaria para agendarlas.\n\nFUNCIONES PRINCIPALES\n\nCoordinar citas según disponibilidad del cliente y del calendario usando la herramienta DISPONIBILIDAD.\n\nRecabar datos obligatorios para agendar una cita con la herramienta AGENDAR:\n\nNombre completo\n\nCorreo electrónico\n\nTeléfono de contacto\n\nZona horaria (ejemplo: America/Argentina/Buenos_Aires)\n\nDetalles del proyecto o consulta (opcional, pero recomendable para preparación)\n\nGuardar información relevante usando postgres_memory.\n\nRecuperar información guardada para no preguntar dos veces lo mismo.\n\nBrindar información sobre la empresa y sus servicios utilizando la herramienta Postgres PGVector Store tool, que contiene el material corporativo de CARVIL.\n\nREGLAS\n\nNunca uses campos vacíos ni inventes datos.\n\nSi falta información, pídele al cliente que lo confirme cordialmente.\n\nAgenda citas solo de lunes a viernes, entre 08:00 y 18:00 (hora Argentina), con un mínimo de 48 horas de anticipación.\n\nCada cita dura como máximo 60 minutos.\n\nNo inventes horarios: consulta siempre la herramienta DISPONIBILIDAD antes de agendar.\n\nSi el cliente propone un horario no disponible, sugiere el más próximo dentro del rango permitido.\n\nUsa la herramienta AGENDAR únicamente cuando tengas confirmados: nombre, email, teléfono y zona horaria.\n\nSi el cliente quiere modificar una cita ya existente, usa la herramienta EDITAR.\n\nSiempre confirma que la reunión será con Eduardo, Asesor y Socio Fundador de CARVIL.\n\nTONO\n\nProfesional, cercano y amable.\n\nHabla siempre en plural (“nosotros”, “nuestro equipo”), nunca en singular.\n\nNo converses sobre temas ajenos a la agenda. Si lo hacen, sugiere cordialmente agendar una cita.\n\nREGLA ESPECIAL: INFORMACIÓN CORPORATIVA\n\nSi el cliente pregunta sobre CARVIL o sus servicios, usa la herramienta Postgres PGVector Store para responder.\n\nSiempre responde en un tono corporativo y orientado al cliente.\n\nUna vez brindada la información, sugiere coordinar una reunión para profundizar con Eduardo.\n\nEJEMPLOS DE INTERACCIÓN\n\n“¡Hola! ¿Qué día y horario dentro de la próxima semana te quedarían cómodos para reunirnos? Revisaremos la agenda y coordinaremos.”\n\n“Para confirmar la cita, ¿nos compartís tu nombre completo, email, teléfono y tu zona horaria?”\n\n“¿Podrías contarnos brevemente sobre tu proyecto o consulta? Así podemos prepararnos mejor para la reunión.”\n\n“Perfecto, en cuanto tengamos tu disponibilidad y datos de contacto, agendamos la reunión con Eduardo.”\n\n“Te compartimos una breve descripción de nuestros servicios y experiencia. Si querés, coordinamos una reunión para analizar tu caso particular con Eduardo.”"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -1896,
+        -640
+      ],
+      "id": "f61e100c-0ba6-4600-a5bc-5a680ddfb171",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "carvil",
+          "mode": "list",
+          "cachedResultName": "carvil"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $('Webhook1').item.json.body.message }}",
+            "nombre_completo": "={{ $json.nombre_completo }}",
+            "nombre": "={{ $json.nombre }}",
+            "apellido": "={{ $json.apellido }}",
+            "email": "={{ $json.email }}",
+            "telefono": "={{ $json.telefono }}",
+            "fecha_cita": "={{ $json.fecha_cita }}",
+            "created_at": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "session_id",
+              "displayName": "session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nombre_completo",
+              "displayName": "nombre_completo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "apellido",
+              "displayName": "apellido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_cita",
+              "displayName": "fecha_cita",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2368,
+        -640
+      ],
+      "id": "6377d57e-35ad-480d-91dd-4bff50c94f4a",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "2or6uK4l7pYZcRFq",
+          "name": "Postgres local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "attendees",
+        "options": {}
+      },
+      "id": "1c8f06f0-6d82-48c2-9d0b-502f6229cbfb",
+      "name": "Split Attendees",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        -3200,
+        96
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1SJosfoM-WZEimBQTz1mu65xiyuq9bHII0Igd1mgCcq0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SJosfoM-WZEimBQTz1mu65xiyuq9bHII0Igd1mgCcq0/edit?usp=drivesdk",
+          "cachedResultName": "Calendar bookings"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SJosfoM-WZEimBQTz1mu65xiyuq9bHII0Igd1mgCcq0/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "value": {
+            "title": "={{ $('on New Booking').item.json.eventTitle }}",
+            "length": "={{ $('on New Booking').item.json.length }}",
+            "timeZone": "={{ $json.timeZone }}",
+            "createdAt": "={{ $('on New Booking').item.json.createdAt }}",
+            "attendeeName": "={{ $json.name }}",
+            "meetingStart": "={{ $('on New Booking').item.json.startTime }}",
+            "attendeeEmail": "={{ $json.email }}"
+          },
+          "schema": [
+            {
+              "id": "createdAt",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "createdAt",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "title",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "meetingStart",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "meetingStart",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "attendeeName",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "attendeeName",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "attendeeEmail",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "attendeeEmail",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timeZone",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "timeZone",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "length",
+              "type": "string",
+              "display": true,
+              "removed": false,
+              "required": false,
+              "displayName": "length",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "c2a63825-6077-4792-b4b4-c0e8a00519f8",
+      "name": "Add users",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -2528,
+        96
+      ],
+      "typeVersion": 4.5,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "events": [
+          "BOOKING_CREATED"
+        ],
+        "options": {}
+      },
+      "id": "7f0997ae-1afe-46eb-9cd6-f35ffe824983",
+      "name": "on New Booking",
+      "type": "n8n-nodes-base.calTrigger",
+      "position": [
+        -3424,
+        96
+      ],
+      "webhookId": "0b5ccb99-8c0a-47e4-a970-403e607c89ed",
+      "typeVersion": 2,
+      "credentials": {
+        "calApi": {
+          "id": "y3k66FiEapgjsGtD",
+          "name": "Cal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.beehiiv.com/v2/publications/{{ $('set data').item.json.publicationId }}/subscriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('set data').item.json.beehiivAPI }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $('Split Attendees').item.json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b770b8c9-4f07-4bde-ad6f-7db30d795b9f",
+      "name": "Add subscriber",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -2304,
+        96
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "70fc23eb-95b5-43ba-9067-8d834d440684",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "id": "2aa7594d-f6fd-4437-a7b0-ad3e23b0e719",
+              "name": "email",
+              "type": "string",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "id": "7a2f22da-04e1-4507-b135-1fdfdcdda77f",
+              "name": "timeZone",
+              "type": "string",
+              "value": "={{ $json.timeZone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "69836c06-d30a-414c-8883-f6d90f2981cf",
+      "name": "Set Attendee",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -2752,
+        96
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('set data').item.json.chatID }}",
+        "text": "=📅 New meeting booked\n\nEvent name: {{ $('Add users').item.json.title }}\nStart Date: {{ $('Add users').item.json.meetingStart }} UTC\nName: {{ $('Add users').item.json.attendeeName }}\nEmail: {{ $('Add users').item.json.attendeeEmail }}\nUser time zone: {{ $('Add users').item.json.timeZone }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e98dd9f2-704d-4ca2-9ff4-8edcc34de34a",
+      "name": "notify in channel",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -2080,
+        96
+      ],
+      "webhookId": "7ade83ec-58fa-4b43-aa3b-93bb0d9ae712",
+      "typeVersion": 1.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "797d5771-b242-47f5-a0c6-dc3a1a8fb15b",
+              "name": "chatID",
+              "type": "string",
+              "value": "yourChatId"
+            },
+            {
+              "id": "1c3239e8-6fe2-48ad-9083-04d108a95aec",
+              "name": "beehiivAPI",
+              "type": "string",
+              "value": "yourAPIkey"
+            },
+            {
+              "id": "8c94a712-93a6-48de-8a27-93c5ed0e68eb",
+              "name": "publicationId",
+              "type": "string",
+              "value": "yourBeehiivPublicationId"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0dd5951a-cb96-4300-bed2-45c2320e2023",
+      "name": "set data",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -2976,
+        96
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const { start, nombre, email, telefono } = item.json;\n\n  return {\n    json: {\n      eventTypeId: \"3151562\",   // ID fijo del tipo de evento\n      start: start ?? new Date().toISOString(), // si no viene, usa ahora mismo\n      attendee: {\n        name: nombre ?? \"Invitado\",\n        email: email ?? \"no-reply@example.com\",\n        timeZone: \"America/Argentina/Buenos_Aires\",\n        phoneNumber: telefono ?? \"+5491100000000\",\n        language: \"es\"\n      },\n      metadata: {\n        fuente: \"n8n\",\n        creado_en: new Date().toISOString()\n      }\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2592,
+        -640
+      ],
+      "id": "86372aba-f599-40e8-930f-b8a980061648",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Responsable para tener la disponibilidad del calendario",
+        "url": "https://api.cal.com/v1/bookings",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "apiKey",
+              "value": "cal_live_c78d0eeee19398feadf962a10aca0f1e"
+            },
+            {
+              "name": "eventTypeId",
+              "value": "={{ $('Code').item.json.eventTypeId }}"
+            },
+            {
+              "name": "startTime",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+            },
+            {
+              "name": "endTime",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', ``, 'string') }}"
+            },
+            {
+              "name": "timeZone",
+              "value": "={{ $('Code').item.json.attendee.timeZone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1888,
+        -416
+      ],
+      "id": "e985a9ce-2d5d-4941-8e10-81a260519fb6",
+      "name": "DISPONIBILIDAD"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Utiliza esta herramienta HTTP request tool para editar una cita",
+        "method": "PUT",
+        "url": "=https://api.cal.com/v1/bookings/{{ $('Code').item.json.eventTypeId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer cal_live_c78d0eeee19398feadf962a10aca0f1e"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1760,
+        -416
+      ],
+      "id": "097ea3a4-de1d-49d0-a13d-9eefbb6d0d0a",
+      "name": "EDITAR"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Utiliza esta herramienta HTTP request tool y agenda la cita ",
+        "method": "POST",
+        "url": "https://api.cal.com/v2/bookings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer cal_live_c78d0eeee19398feadf962a10aca0f1e"
+            },
+            {
+              "name": "cal-api-version",
+              "value": "2024-08-13"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "eventTypeId",
+              "value": "={{ $('Code').item.json.eventTypeId }}"
+            },
+            {
+              "name": "attendee.name",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            },
+            {
+              "name": "attendee.email",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+            },
+            {
+              "name": "attendee.timeZone",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', ``, 'string') }}"
+            },
+            {
+              "name": "attendee.phoneNumber",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', ``, 'string') }}"
+            },
+            {
+              "name": "attendee.language",
+              "value": "={{ $('Code').item.json.attendee.language }}"
+            },
+            {
+              "name": "start",
+              "value": "={{ $('Code').item.json.start }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1632,
+        -416
+      ],
+      "id": "c0b1c259-b9ce-42c7-9b52-12dcf1ab04df",
+      "name": "AGENDAR1"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Base de datos Vector Postgress con la informacion sobre Nuestra Empresa y Servicios Ofrecidos",
+        "tableName": "documentos",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        -1504,
+        -416
+      ],
+      "id": "b7b01fd0-2e43-4671-8b60-44abd397f4d5",
+      "name": "Postgres PGVector Store",
+      "credentials": {
+        "postgres": {
+          "id": "2or6uK4l7pYZcRFq",
+          "name": "Postgres local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        -1424,
+        -208
+      ],
+      "id": "3a3706dd-8751-4bcd-942d-e6b8dae67725",
+      "name": "Embeddings Mistral Cloud",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "DoV1l0tGmaIP4tJG",
+          "name": "Mistral Cloud account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "empresa",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "empresa": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Booking",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set data": {
+      "main": [
+        [
+          {
+            "node": "Set Attendee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add users": {
+      "main": [
+        [
+          {
+            "node": "Add subscriber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Attendee": {
+      "main": [
+        [
+          {
+            "node": "Add users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add subscriber": {
+      "main": [
+        [
+          {
+            "node": "notify in channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "on New Booking": {
+      "main": [
+        [
+          {
+            "node": "Split Attendees",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Attendees": {
+      "main": [
+        [
+          {
+            "node": "set data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DISPONIBILIDAD": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EDITAR": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AGENDAR1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres PGVector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Mistral Cloud": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "73e07e26-3f8f-4ec1-b3aa-79953e6391c0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "85370544d3556700e9c3e84dc2f1c03797748d10f605c0604e38c609b61cb28d"
+  },
+  "id": "RH02y0QVAOig1dgE",
+  "tags": [
+    {
+      "createdAt": "2025-08-25T05:36:39.075Z",
+      "updatedAt": "2025-08-25T05:36:39.075Z",
+      "id": "Ptn3FAYV8AuLrJ57",
+      "name": "newsletter"
+    },
+    {
+      "createdAt": "2025-08-25T05:36:39.182Z",
+      "updatedAt": "2025-08-25T05:36:39.182Z",
+      "id": "rhE4wJ7ALyiaE8qb",
+      "name": "1node"
+    },
+    {
+      "createdAt": "2025-08-25T05:36:39.201Z",
+      "updatedAt": "2025-08-25T05:36:39.201Z",
+      "id": "UcWUOi1JuMmAGG5n",
+      "name": "template"
+    }
+  ]
+}
