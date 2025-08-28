@@ -73,8 +73,9 @@
       <option value="en">EN</option>
     </select>
   </header>
-
   <main>
+
+<img src="logosf2.png" alt="Logo de CARVIL" class="logo">
     <!-- Servicios -->
     <section class="servicios" id="servicios">
       <h2 class="servicios-titulo" data-i18n="ourServices">Nuestros Servicios</h2>
@@ -84,7 +85,7 @@
       
       <div class="center-container">
       <a href="username.html" target="_blank" class="btn-outline" data-i18n="createAgent">
-        ✨ CREA TU AGENTE VIRTUAL CON IA
+        ✨ DASHBOARD
       </a>
     </div>
       
@@ -266,7 +267,7 @@
         es: {
           companyName: "CARVIL Technology Solutions",
           services: "Servicios",
-          createAgent: "✨ CREA TU AGENTE VIRTUAL CON IA",
+          createAgent: "✨ DASHBOARD",
           aboutUs: "Nosotros",
           contact: "Contacto",
           ourServices: "Nuestros Servicios",
@@ -331,7 +332,7 @@
         en: {
           companyName: "CARVIL Technology Solutions",
           services: "Services",
-          createAgent: "✨ CREATE YOUR VIRTUAL AI AGENT",
+          createAgent: "✨ DASHBOARD",
           aboutUs: "About Us",
           contact: "Contact",
           ourServices: "Our Services",
@@ -428,7 +429,7 @@
   toggleBtn.addEventListener('click', () => {
     chatWindow.classList.toggle('open');
     if (chatWindow.classList.contains('open') && messages.childElementCount === 0) {
-      addMessage('Bot', '¡Hola! Soy CarvilBot, tu asistente virtual. ingresa tu email para comenzar ¿En qué puedo ayudarte?', true);
+      addMessage('Bot', '¡Hola! Soy CarvilBot, tu asistente virtual. ¿En qué puedo ayudarte?', true);
     }
   });
 
@@ -453,7 +454,7 @@
     messages.scrollTop = messages.scrollHeight;
 
     // Llamada a tu webhook de n8n
-    fetch('https://handed-consequence-neighbor-simply.trycloudflare.com/webhook/guardar-cita', {
+    fetch('https://export-stocks-relying-rp.trycloudflare.com/webhook/guardar-cita', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text })

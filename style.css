@@ -19,6 +19,62 @@ body.dark {
   --card-bg: rgba(41, 41, 61, 0.85);
 }
 
+/* LOGO */
+.logo {
+  display: block;
+  margin: 2cm auto 0 auto;
+}
+
+/* SERVICIOS TEXTO ESTILO TARJETA */
+.servicios-texto {
+  max-width: 700px;
+  margin: 2rem auto; 
+  padding: 1.5rem 2rem; 
+  background-color: var(--card-bg);
+  backdrop-filter: blur(5px);
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: var(--text-color);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
+}
+
+/* efecto destello */
+.servicios-texto::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: rotate(45deg) translate(-200%, -200%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+/* hover efecto */
+.servicios-texto:hover::after {
+  transform: rotate(45deg) translate(200%, 200%);
+}
+
+.servicios-texto:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 20px var(--primary-color);
+}
+
+/* BOTON CREAR AGENTE FLOTANTE */
+.center-container {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  margin: 0;
+  text-align: left;
+  z-index: 1100;
+}
+
 /* RESET Y BASE */
 * {
   box-sizing: border-box;
@@ -44,7 +100,7 @@ body::before {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  background: rgba(255, 255, 255, 0.4);
+  background: #;
   z-index: -1;
   transition: background 0.4s ease;
 }
@@ -154,13 +210,6 @@ h2, h3 {
   margin-bottom: 1rem;
 }
 
-.servicios-texto {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 2rem auto;
-  color: var(--text-color);
-}
-
 .rows {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -203,7 +252,7 @@ h2, h3 {
   font-size: 0.95rem;
 }
 
-/* EFECTO DESTELLO */
+/* EFECTO DESTELLO TARJETAS */
 [class^="col"]::after, .fullwidth .card::after {
   content: "";
   position: absolute;
@@ -221,7 +270,7 @@ h2, h3 {
   transform: rotate(45deg) translate(200%, 200%);
 }
 
-/* SECCIONES FULL WIDTH (Nosotros y Proyectos) */
+/* SECCIONES FULL WIDTH */
 .fullwidth {
   display: flex;
   justify-content: center;
@@ -236,7 +285,7 @@ h2, h3 {
   text-align: left;
 }
 
-/* LISTAS EN PROYECTOS */
+/* LISTAS */
 .fullwidth .card ul {
   list-style: none;
   padding-left: 0;
@@ -329,11 +378,6 @@ footer {
 }
 
 /* BOTON CREAR AGENTE */
-.center-container {
-  text-align: center;
-  margin: 20px 0;
-}
-
 .btn-outline {
   display: inline-block;
   padding: 12px 24px;
@@ -379,15 +423,6 @@ footer {
   transform: translateY(-2px) scale(1.02);
 }
 
-.btn-outline:focus,
-.btn-outline:active {
-  outline: none;
-  color: var(--accent-color);
-  border-color: var(--accent-color);
-  box-shadow: 0 0 10px var(--accent-color);
-}
-
-/* MODO OSCURO PARA BOTON */
 body.dark .btn-outline {
   background-color: var(--card-bg);
   color: var(--primary-color);
