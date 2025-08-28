@@ -19,10 +19,31 @@ body.dark {
   --card-bg: rgba(41, 41, 61, 0.85);
 }
 
-/* LOGO */
+/* LOGO RESPONSIVE */
 .logo {
-  display: block;
-  margin: 2cm auto 0 auto;
+  display: block;          
+  margin: 0 auto;          
+  max-width: 100%;
+  height: auto;
+}
+
+/* Breakpoints para controlar mejor el tamaño */
+@media (min-width: 1024px) { /* pantallas grandes */
+  .logo {
+    width: 600px; /* aumentado un poco */
+  }
+}
+
+@media (max-width: 768px) { /* tablets */
+  .logo {
+    width: 200px;
+  }
+}
+
+@media (max-width: 480px) { /* móviles */
+  .logo {
+    width: 150px;
+  }
 }
 
 /* SERVICIOS TEXTO ESTILO TARJETA */
@@ -123,6 +144,7 @@ header {
   z-index: 1000;
   transition: background-color 0.4s ease;
   border-bottom: 1px solid #ddd;
+  flex-wrap: wrap; /* ✅ permite que los hijos bajen en móvil */
 }
 
 .logo-title {
@@ -544,7 +566,9 @@ body.dark .btn-outline:hover {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   header {
-    flex-direction: column;
+    flex-direction: column; /* ✅ logo arriba, botón abajo */
+    align-items: center;
+    text-align: center;
     padding: 1rem;
   }
 
@@ -554,16 +578,17 @@ body.dark .btn-outline:hover {
     gap: 1rem;
   }
 
+  .btn-outline {
+    margin-top: 15px; /* ✅ separación con el logo */
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
   #chat-window {
     width: 90%;
     bottom: 80px;
     right: 5%;
     height: 400px;
-  }
-
-  .btn-outline {
-    padding: 10px 20px;
-    font-size: 14px;
   }
 
   .fullwidth .card {
