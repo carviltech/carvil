@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <title>Ingreso al Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    :root {
+      --primary-color: #3b82f6;
+      --secondary-color: #111827;
+      --text-color: #f9fafb;
+      --input-bg: #1f2937;
+      --input-border: #374151;
+      --button-hover: #2563eb;
+      --border-radius: 10px;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--secondary-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background-color: #1e293b;
+      padding: 40px 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 400px;
+    }
+    .form-container h2 {
+      color: var(--text-color);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    input[type="email"],
+    input[type="password"] {
+      width: 90%;
+      padding: 12px 15px;
+      border: 1px solid var(--input-border);
+      border-radius: var(--border-radius);
+      background-color: var(--input-bg);
+      font-size: 16px;
+      color: var(--text-color);
+      transition: border 0.3s, background-color 0.3s;
+    }
+    input:focus {
+      border-color: var(--primary-color);
+      background-color: #111827;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: var(--button-hover);
+    }
+    .form-links {
+      margin-top: 15px;
+      text-align: center;
+    }
+    .form-links a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 14px;
+      margin: 0 10px;
+      transition: color 0.3s;
+    }
+    .form-links a:hover {
+      color: var(--button-hover);
+      text-decoration: underline;
+    }
+    .success-message {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      color: #22c55e;
+      font-weight: 600;
+    }
+    .google-login {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Ingreso al Dashboard</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit">Iniciar Sesion</button>
+      <div class="form-links">
+        <a href="registro.html">Crear nuevo Usuario</a> | 
+        <a href="reset.html">Olvidé mi contraseña</a>
+      </div>
+      <p class="success-message" id="successMessage">¡Redirigiendo al Dashboard correctamente!</p>
+    </form>
+
+    <div class="google-login">
+      <div id="g_id_onload"
+           data-client_id="TU_CLIENT_ID_DE_GOOGLE"
+           data-callback="handleCredentialResponse"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin" data-type="standard"></div>
+    </div>
+  </div>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <script>
+  const form = document.getElementById('loginForm');
+  const successMessage = document.getElementById('successMessage');
+
+  // Login tradicional
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = form.email.value.trim();
+    const password = form.password.value.trim();
+
+    if (!email || !password) {
+      alert('Por favor completa todos los campos.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5678/webhook/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.valid) {
+        successMessage.style.display = 'block';
+        const redirectUrl = result.url || 'ia.html';
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 500);
+      } else {
+        alert('Email o contraseña incorrectos');
+        console.error('Error del webhook:', result);
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+      alert('Sus credenciales no coinciden. Olvidaste tu contraseña?');
+    }
+  });
+
+  // Login con Google
+  function handleCredentialResponse(response) {
+    console.log('ID Token Google:', response.credential);
+
+    fetch('http://localhost:5678/webhook/session-google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: response.credential })
+    })
+    .then(res => res.json())
+    .then(result => {
+      if(result.valid) {
+        successMessage.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = result.url || 'ia.html';
+        }, 500);
+      } else {
+        alert('No se pudo iniciar sesión con Google');
+      }
+    })
+    .catch(err => {
+      console.error('Error conexión backend Google:', err);
+    });
+  }
+  </script>
+
+</body>
+</html>
+

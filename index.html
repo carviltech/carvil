@@ -38,59 +38,90 @@
   </style>
 </head>
 
-<body>
+<body class="dark">
   <header>
-    <button id="toggle-theme" aria-label="Cambiar tema">
-      <i data-lucide="moon" class="icon-theme"></i>
-    </button>
+  <button id="toggle-theme" aria-label="Cambiar tema">
+    <i data-lucide="moon" class="icon-theme"></i>
+  </button>
 
-    <div class="logo-title" data-i18n="companyName">
-      <img src="logosf.png" alt="Logo" />
-      CARVIL Technology Solutions
-    </div>
+  <div class="logo-title" data-i18n="companyName">
+    <img src="logosf.png" alt="Logo" />
+    CARVIL Technology Solutions
+  </div>
 
-    <nav class="menu-principal">
-      <a href="#servicios" class="menu-link" data-i18n="services">Servicios</a>
-      <a href="#nosotros" class="menu-link" data-i18n="aboutUs">Nosotros</a>
-      <a href="#contacto" class="menu-link" data-i18n="contact">Contacto</a>
-    </nav>
+  <nav class="menu-principal">
+    <a href="#servicios" class="menu-link" data-i18n="services">Servicios</a>
+    <a href="#nosotros" class="menu-link" data-i18n="aboutUs">Nosotros</a>
+    <a href="#contacto" class="menu-link" data-i18n="contact">Contacto</a>
+  </nav>
 
-    <div class="social-icons">
-      <a href="https://www.facebook.com/profile.php?id=61577767590965" target="_blank" aria-label="Facebook">
-        <i class="fab fa-facebook-f"></i>
-      </a>
-      <a href="https://x.com/carvilsas" target="_blank" aria-label="X">
-        <i class="fab fa-twitter"></i>
-      </a>
-      <a href="https://www.linkedin.com/in/eduardo-carballo-gais-b70273a1/" target="_blank" aria-label="LinkedIn">
-        <i class="fab fa-linkedin-in"></i>
-      </a>
-    </div>
+  <div class="social-icons">
+    <a href="https://www.facebook.com/profile.php?id=61577767590965" target="_blank" aria-label="Facebook">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="https://x.com/carvilsas" target="_blank" aria-label="X">
+      <i class="fab fa-twitter"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/eduardo-carballo-gais-b70273a1/" target="_blank" aria-label="LinkedIn">
+      <i class="fab fa-linkedin-in"></i>
+    </a>
+  </div>
 
-    <!-- Selector de idioma -->
-    <select id="language-selector" aria-label="Selector de idioma">
-      <option value="es" selected>ES</option>
-      <option value="en">EN</option>
-    </select>
-   
-  </header>
-   <div class="center-container">
-      <a href="username.html" target="_blank" class="btn-outline" data-i18n="createAgent">
-        ✨ DASHBOARD
-      </a>
+  <!-- Selector de idioma -->
+  <select id="language-selector" aria-label="Selector de idioma">
+    <option value="es" selected>ES</option>
+    <option value="en">EN</option>
+  </select>
+
+  <!-- Botón nuevo: Inicio de Sesión / Dashboard -->
+  <a href="dashboard.html" 
+     class="btn-outline btn-dashboard" 
+     data-i18n="dashboardBtn"
+     title="Accede a tu panel">
+    🔑 Dashboard
+  </a>
+</header>
+
   <main>
 
-    </div>
-<img src="logosf2.png" alt="Logo de CARVIL" class="logo">
-    <!-- Servicios -->
+    <img src="logosf2.png" alt="Logo de CARVIL" class="logo">
     <section class="servicios" id="servicios">
-      <h2 class="servicios-titulo" data-i18n="ourServices">Nuestros Servicios</h2>
-      <div class="servicios-texto" data-i18n="servicesText">
-        Ofrecemos soluciones tecnológicas integrales, desde sistemas empresariales completos hasta herramientas específicas que impulsan la transformación digital de tu negocio
+  <h2 class="servicios-titulo" data-i18n="ourServices">Nuestros Servicios</h2>
+  <div class="servicios-texto" data-i18n="servicesText">
+    Ofrecemos soluciones tecnológicas integrales, desde sistemas empresariales completos hasta herramientas específicas que impulsan la transformación digital de tu negocio.
+  </div>
+
+  <!-- Botón colocado debajo del texto introductorio -->
+  <div class="center-container">
+    <a href="inicio_sesion.html" 
+       target="_blank" 
+       class="btn-outline" 
+       data-i18n="createAgent" 
+       title="7 días de prueba gratis">
+      ✨ Crea tu Agente Inteligente CRM
+    </a>
+  </div>
+
+  <div class="rows">
+    <div class="col1">
+      <div class="icon-container">
+        <i class="fas fa-network-wired"></i>
       </div>
-      
-      
-      
+      <h3 data-i18n="erpTitle">Sistemas ERP</h3>
+      <p data-i18n="erpDesc">
+        Integración completa y eficiente de todos los procesos empresariales clave como finanzas, recursos humanos, cadena de suministro, inventarios y ventas en una única plataforma centralizada. Facilita la gestión, optimiza recursos y mejora la toma de decisiones para impulsar la productividad y el crecimiento sostenible de tu empresa.
+      </p>
+    </div>
+
+    <div class="col2">
+      <div class="icon-container">
+        <i class="fas fa-users"></i>
+      </div>
+      <h3 data-i18n="crmTitle">Sistemas CRM</h3>
+      <p data-i18n="crmDesc">
+        Optimizamos la gestión de la relación con tus clientes mediante la automatización inteligente del proceso de ventas, seguimiento personalizado y análisis de datos. Esto permite mejorar la experiencia del cliente, aumentar la fidelización y maximizar las oportunidades comerciales de manera eficiente y escalable.
+      </p>
+    </div>
       <div class="rows">
         <div class="col1">
   <div class="icon-container">
@@ -98,7 +129,7 @@
   </div>
   <h3 data-i18n="erpTitle">Sistemas ERP</h3>
   <p data-i18n="erpDesc">
-    Centralizamos y optimizamos todos los procesos clave de tu empresa —finanzas, recursos humanos, cadena de suministro, inventarios y ventas— en una sola plataforma ágil e inteligente. Simplifica la gestión, maximiza la eficiencia y potencia la toma de decisiones estratégicas para un crecimiento sostenido.
+    Integración completa y eficiente de todos los procesos empresariales clave como finanzas, recursos humanos, cadena de suministro, inventarios y ventas en una única plataforma centralizada. Facilita la gestión, optimiza recursos y mejora la toma de decisiones para impulsar la productividad y el crecimiento sostenible de tu empresa.
   </p>
 </div>
 
@@ -108,7 +139,7 @@
   </div>
   <h3 data-i18n="crmTitle">Sistemas CRM</h3>
   <p data-i18n="crmDesc">
-    Transformamos la relación con tus clientes mediante soluciones de CRM avanzadas: seguimiento personalizado, análisis inteligente y automatización del ciclo comercial. Genera experiencias únicas, incrementa la fidelización y convierte cada interacción en una oportunidad de negocio.
+    Optimizamos la gestión de la relación con tus clientes mediante la automatización inteligente del proceso de ventas, seguimiento personalizado y análisis de datos. Esto permite mejorar la experiencia del cliente, aumentar la fidelización y maximizar las oportunidades comerciales de manera eficiente y escalable.
   </p>
 </div>
 
@@ -118,7 +149,7 @@
   </div>
   <h3 data-i18n="multichannelTitle">Soluciones Multicanal</h3>
   <p data-i18n="multichannelDesc">
-    Integramos tu marca en todos los canales digitales con aplicaciones móviles, plataformas web y entornos responsivos de alto rendimiento. Diseñamos experiencias fluidas y coherentes que conectan con tus clientes en cualquier dispositivo, multiplicando tu alcance y efectividad comercial.
+    Servicios digitales integrados para web, móviles y múltiples dispositivos. Aplicaciones móviles eficientes, rápidas y adaptadas a cada necesidad. Diseño web responsivo y optimizado para ventas. Proyectos modernos con tecnologías actualizadas y diseño profesional.
   </p>
 </div>
 
@@ -128,7 +159,7 @@
   </div>
   <h3 data-i18n="cloudTitle">Servicios en la Nube</h3>
   <p data-i18n="cloudDesc">
-    Ofrecemos infraestructura escalable, segura y flexible en la nube para que tu negocio crezca sin límites. Desde servidores virtuales hasta soluciones de ciberseguridad y análisis de datos, brindamos estabilidad 24/7 con la máxima protección y confianza tecnológica.
+    Infraestructura escalable y remota para tu negocio. Seguridad informática, análisis de datos, ciberseguridad y protección de datos. Cloud y VPS: infraestructura de servidores en la nube seguros. Nuestro servicio es 24/7 debido a nuestro sistema estable.
   </p>
 </div>
 
@@ -138,7 +169,7 @@
   </div>
   <h3 data-i18n="contentMgmtTitle">Gestión de Contenidos Web</h3>
   <p data-i18n="contentMgmtDesc">
-    Creamos experiencias digitales únicas con sitios web modernos, responsivos y optimizados para ventas. Desde portales corporativos hasta contenidos visuales y branding, desarrollamos diseños creativos y profesionales que fortalecen tu identidad y amplifican tu presencia digital.
+    Diseño web responsivo y optimizado para ventas. Proyectos modernos con tecnología actualizada, diseño profesional y portales corporativos. Contenido visual y animaciones, diseño de logo, icono, portada y material digital para web y redes sociales.
   </p>
 </div>
 
@@ -148,10 +179,22 @@
   </div>
   <h3 data-i18n="automationTitle">Automatización Inteligente</h3>
   <p data-i18n="automationDesc">
-    Impulsamos la eficiencia de tu empresa con procesos automatizados que optimizan flujos de trabajo, reducen tareas repetitivas y aumentan la productividad. Implementamos soluciones inteligentes que conectan herramientas, equipos y clientes en un ecosistema digital ágil y escalable.
+    Implementación de automatización con inteligencia artificial. Agentes Inteligentes en nuestro VPS n8n, publicaciones automatizadas en la web y redes sociales. Plataformas de comunicación multicanal, agenda de citas con clientes y almacenamiento seguro de información.
   </p>
 </div>
 
+<div class="col7">
+  <div class="icon-container">
+    <i class="fas fa-robot"></i>
+  </div>
+  <h3 data-i18n="SaasTitle">SaaS B2B y B2C</h3>
+  <p data-i18n="SaaSDesc">
+    Desarrollamos y ofrecemos soluciones Software as a Service (SaaS) adaptadas tanto para empresas (B2B) como para consumidores finales (B2C). Nuestros SaaS permiten acceder a herramientas avanzadas en la nube sin necesidad de infraestructura propia, reduciendo costos y aumentando la escalabilidad.
+    
+B2B: Plataformas de gestión empresarial, dashboards de analítica, ERP en la nube, CRM colaborativo y soluciones de automatización corporativa.
+
+B2C: Aplicaciones móviles, e-commerce inteligentes, portales educativos, gestión de contenidos y servicios digitales personalizados para usuarios finales.
+  </p>
 
         
       </div>
@@ -269,7 +312,7 @@
         es: {
           companyName: "CARVIL Technology Solutions",
           services: "Servicios",
-          createAgent: "✨ DASHBOARD",
+          createAgent: "✨ Crea tu Agente Inteligente CRM",
           aboutUs: "Nosotros",
           contact: "Contacto",
           ourServices: "Nuestros Servicios",
@@ -334,7 +377,7 @@
         en: {
           companyName: "CARVIL Technology Solutions",
           services: "Services",
-          createAgent: "✨ DASHBOARD",
+          createAgent: "✨ Create your Intelligent CRM Agent",
           aboutUs: "About Us",
           contact: "Contact",
           ourServices: "Our Services",
@@ -456,7 +499,7 @@
     messages.scrollTop = messages.scrollHeight;
 
     // Llamada a tu webhook de n8n
-    fetch('https://lands-corps-pavilion-breast.trycloudflare.com/webhook/guardar-cita', {
+    fetch('http://localhost:5678/webhook/guardar-cita', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text })
