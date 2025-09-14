@@ -88,12 +88,9 @@ body.dark {
 
 /* BOTON CREAR AGENTE FLOTANTE */
 .center-container {
-  position: fixed;
-  top: 70px;
-  left: 20px;
-  margin: 0;
-  text-align: left;
-  z-index: 1100;
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
 }
 
 /* RESET Y BASE */
