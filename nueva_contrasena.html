@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <title>Crear Nueva Contraseña - Carvil Tech</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    :root {
+      --primary-color: #3b82f6;
+      --secondary-color: #111827;
+      --text-color: #f9fafb;
+      --input-bg: #1f2937;
+      --input-border: #374151;
+      --button-hover: #2563eb;
+      --border-radius: 10px;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--secondary-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background-color: #1e293b;
+      padding: 40px 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 400px;
+    }
+    .form-container h2 {
+      color: var(--text-color);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    input[type="password"] {
+      width: 90%;
+      padding: 12px 15px;
+      border: 1px solid var(--input-border);
+      border-radius: var(--border-radius);
+      background-color: var(--input-bg);
+      font-size: 16px;
+      color: var(--text-color);
+      transition: border 0.3s, background-color 0.3s;
+    }
+    input:focus {
+      border-color: var(--primary-color);
+      background-color: #111827;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: #ffffff;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: var(--button-hover);
+    }
+    .form-links {
+      margin-top: 15px;
+      text-align: center;
+    }
+    .form-links a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 14px;
+      margin: 0 10px;
+      transition: color 0.3s;
+    }
+    .form-links a:hover {
+      color: var(--button-hover);
+      text-decoration: underline;
+    }
+    .success-message, .error-message {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .success-message { color: #22c55e; }
+    .error-message { color: #f87171; }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Crear Nueva Contraseña</h2>
+    <form id="resetForm">
+      <div class="form-group">
+        <label for="password">Nueva Contraseña</label>
+        <input type="password" id="password" name="password" placeholder="Introduce tu nueva contraseña" required>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Contraseña</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Reingresa tu contraseña" required>
+      </div>
+      <button type="submit">Guardar Contraseña</button>
+      <div class="form-links">
+        <a href="username.html">Volver al Ingreso</a>
+      </div>
+      <p class="success-message" id="successMessage">Tu contraseña ha sido actualizada correctamente.</p>
+      <p class="error-message" id="errorMessage">Las contraseñas no coinciden o hubo un error.</p>
+    </form>
+  </div>
+
+<script>
+const form = document.getElementById('resetForm');
+const successMessage = document.getElementById('successMessage');
+const errorMessage = document.getElementById('errorMessage');
+const submitButton = form.querySelector('button');
+
+// Obtener token de la URL
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const password = form.password.value.trim();
+  const confirmPassword = form.confirmPassword.value.trim();
+
+  if (password !== confirmPassword) {
+    errorMessage.textContent = 'Las contraseñas no coinciden.';
+    errorMessage.style.display = 'block';
+    successMessage.style.display = 'none';
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = 'Enviando...';
+
+  try {
+    const response = await fetch('http://localhost:5678/webhook-test/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, password })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      successMessage.style.display = 'block';
+      errorMessage.style.display = 'none';
+      form.reset();
+    } else {
+      errorMessage.textContent = result.message || 'Hubo un error al actualizar la contraseña.';
+      errorMessage.style.display = 'block';
+      successMessage.style.display = 'none';
+    }
+
+  } catch (error) {
+    console.error('Error de conexión:', error);
+    errorMessage.textContent = 'Error al conectar con el servidor. Intenta nuevamente.';
+    errorMessage.style.display = 'block';
+    successMessage.style.display = 'none';
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Guardar Contraseña';
+  }
+});
+</script>
+
+</body>
+</html>
+

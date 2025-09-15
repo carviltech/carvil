@@ -229,30 +229,6 @@ h2, h3 {
   margin-bottom: 1rem;
 }
 
-.rows {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-}
-
-/* TARJETAS */
-[class^="col"], .fullwidth .card {
-  background-color: var(--card-bg);
-  backdrop-filter: blur(5px);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-[class^="col"]:hover, .fullwidth .card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 20px var(--primary-color);
-}
-
 .icon-container {
   font-size: 2.5rem;
   color: var(--primary-color);
@@ -260,33 +236,6 @@ h2, h3 {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-[class^="col"] h3, .fullwidth .card h3 {
-  text-align: center;
-}
-
-[class^="col"] p, .fullwidth .card p {
-  text-align: center;
-  font-size: 0.95rem;
-}
-
-/* EFECTO DESTELLO TARJETAS */
-[class^="col"]::after, .fullwidth .card::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.0) 100%);
-  transform: rotate(45deg) translate(-200%, -200%);
-  transition: transform 0.6s ease;
-  pointer-events: none;
-}
-
-[class^="col"]:hover::after, .fullwidth .card:hover::after {
-  transform: rotate(45deg) translate(200%, 200%);
 }
 
 /* SECCIONES FULL WIDTH */
@@ -461,7 +410,7 @@ body.dark .btn-outline:hover {
   right: 20px;
   width: 65px;
   height: 65px;
-  background: url('bot.png') no-repeat center/cover;
+  background: url('bot2.png') no-repeat center/cover;
   border-radius: 50%;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   cursor: pointer;
@@ -563,10 +512,11 @@ body.dark .btn-outline:hover {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   header {
-    flex-direction: column; /* ✅ logo arriba, botón abajo */
+    flex-direction: column; 
     align-items: center;
     text-align: center;
     padding: 1rem;
+    }
   }
 
   .menu-principal {
@@ -592,5 +542,167 @@ body.dark .btn-outline:hover {
     width: 95%;
     padding: 1.5rem;
   }
+#language-selector {
+  width: 40px;
+  height: 28px;
+  perspective: 600px;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.lang-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.lang-inner img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.lang-inner .back {
+  transform: rotateY(180deg);
+}
+
+body.dark .lang-inner img {
+  background-color: var(--card-bg);
+  border-color: #666;
+}
+
+.lang-flip.flipped .lang-inner {
+  transform: rotateY(180deg);
+}
+header {
+    background: linear-gradient(228deg, #000000, #1976d2);
+    color: white;
+    padding: 10px 20px;
+}
+body {
+  font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3, header nav a {
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+}
+
+
+
+
+/* EFECTO DESTELLO TARJETAS */
+[class^="col"]::after, .fullwidth .card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.0) 100%);
+  transform: rotate(45deg) translate(-200%, -200%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+[class^="col"]:hover::after, .fullwidth .card:hover::after {
+  transform: rotate(45deg) translate(200%, 200%);
+}
+
+[class^="col"] h3, .fullwidth .card h3 {
+  text-align: center;
+}
+
+[class^="col"] p, .fullwidth .card p {
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-auto-rows: 1fr; /* fuerza que todas las filas tengan la misma altura */
+  gap: 1.5rem;
+  align-items: stretch; /* estira las columnas para igualar altura */
+}
+
+
+/* TARJETAS */
+[class^="col"], .fullwidth .card {
+  background-color: var(--card-bg);
+  backdrop-filter: blur(5px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+[class^="col"]:hover, .fullwidth .card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 20px var(--primary-color);
+}
+
+/* EFECTO DESTELLO TARJETAS */
+[class^="col"]::after, .fullwidth .card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.0) 100%);
+  transform: rotate(45deg) translate(-200%, -200%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+[class^="col"]:hover::after, .fullwidth .card:hover::after {
+  transform: rotate(45deg) translate(200%, 200%);
+}
+
+[class^="col"] h3, .fullwidth .card h3 {
+  text-align: center;
+}
+
+[class^="col"] p, .fullwidth .card p {
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-auto-rows: 1fr; /* fuerza que todas las filas tengan la misma altura */
+  gap: 1.5rem;
+  align-items: stretch; /* estira las columnas para igualar altura */
+}
+
+
+/* TARJETAS */
+[class^="col"], .fullwidth .card {
+  background-color: var(--card-bg);
+  backdrop-filter: blur(5px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+[class^="col"]:hover, .fullwidth .card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 20px var(--primary-color);
 }
 

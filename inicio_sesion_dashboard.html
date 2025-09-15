@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <title>Inicio de Sesión</title>
+  <title>Ingreso al Dashboard</title>
+  <link rel="icon" href="favicon.ico" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
     :root {
@@ -109,7 +109,7 @@
 </head>
 <body>
   <div class="form-container">
-    <h2>Iniciar Sesion</h2>
+    <h2>Ingreso al Dashboard</h2>
 
     <!-- Login tradicional -->
     <form id="loginForm">
@@ -141,7 +141,6 @@
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <script>
     const form = document.getElementById('loginForm');
     const successMessage = document.getElementById('successMessage');
@@ -154,33 +153,32 @@
       if (!email || !password) { alert('Por favor completa todos los campos.'); return; }
 
       try {
-        const response = await fetch('http://localhost:5678/webhook/botbuilder', {
+        const response = await fetch('http://localhost:5678/webhook/dashboard', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
         });
         const result = await response.json();
         console.log('Respuesta backend login tradicional:', result);
-
         if (response.ok && result.valid) {
           localStorage.setItem("email", email);
           successMessage.style.display = 'block';
-          setTimeout(() => { window.location.href = result.url || 'ia.html'; }, 500);
+          setTimeout(() => { window.location.href = result.url || 'dashboard.html'; }, 500);
         } else {
           alert('Email o contraseña incorrectos');
         }
-      } catch (error) {
-        console.error('Error de conexión:', error);
+      } catch (err) {
+        console.error('Error de conexión:', err);
         alert('Sus credenciales no coinciden. ¿Olvidaste tu contraseña?');
       }
     });
 
-    // Login extendido con Google
+    // Login con Google
     function handleCredentialResponse(response) {
       console.log('ID Token Google recibido:', response);
       console.log('Credential token:', response.credential);
 
-      fetch('http://localhost:5678/webhook/session-google', {
+      fetch('http://localhost:5678/webhook/session-google2', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: response.credential })
@@ -188,13 +186,17 @@
       .then(res => res.json())
       .then(result => {
         console.log('Respuesta backend Google:', result);
-        if(result.valid) {
+        if (result.valid) {
+          // Guardar info del usuario
           if(result.email) localStorage.setItem("email", result.email);
           if(result.name) localStorage.setItem("name", result.name);
           if(result.picture) localStorage.setItem("picture", result.picture);
 
+          // Mostrar mensaje de éxito
           successMessage.style.display = 'block';
-          setTimeout(() => { window.location.href = result.url || 'ia.html'; }, 500);
+
+          // Redirigir al dashboard
+          setTimeout(() => { window.location.href = result.url || 'dashboard.html'; }, 500);
         } else {
           alert('No se pudo iniciar sesión con Google');
         }
