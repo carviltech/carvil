@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CARVIL Technology Solutions - Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Variables de colores */
+:root {
+  --bg-color: #fff;
+  --text-color: #1a1a1a;
+  --primary-color: #3b82f6;
+  --accent-color: #22c55e;
+}
+
+/* Tema oscuro */
+body.dark {
+  --bg-color: #121212;
+  --text-color: #eee;
+  --primary-color: #60a5fa;
+}
+
+/* Reset y estilos generales */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding-top: 70px; /* espacio para header */
+  overflow-x: hidden;
+}
+
+/* Header fijo */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--bg-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 1000;
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+/* Logo */
+.logo-title {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  flex-shrink: 0;
+}
+.logo-title img {
+  height: 36px;
+}
+
+/* User info derecha */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.user-info img {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+.user-text strong {
+  font-weight: 600;
+}
+.user-text span {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+/* Main */
+main {
+  padding: 20px 15px;
+}
+
+/* Formulario */
+form input, form select, form button {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+form button {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #2563eb;
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-title">
+    <img src="logosf.png" alt="Logo" />CARVIL Technology Solutions
+  </div>
+  <div class="user-info">
+    <img id="user-picture" src="default-avatar.png" alt="Usuario">
+    <div class="user-text">
+      <strong id="user-name">Usuario</strong>
+      <span id="user-email">email@example.com</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<h1>Dashboard</h1>
+<p>Email: <strong id="main-email"></strong></p>
+<p>Nombre: <strong id="main-name"></strong></p>
+<img id="main-picture" alt="Foto de usuario" style="height:80px; border-radius:50%; display:none;">
+</main>
+
+<script>
+// Obtener datos de localStorage
+const email = localStorage.getItem("email");
+const name = localStorage.getItem("name");
+const picture = localStorage.getItem("picture");
+
+// Si no hay sesión, redirigir al login
+if(!email) {
+  window.location.href = "login.html";
+} else {
+  // Header
+  document.getElementById("user-email").textContent = email;
+  document.getElementById("user-name").textContent = name || "";
+  if(picture) {
+    const userPic = document.getElementById("user-picture");
+    userPic.src = picture;
+    userPic.style.display = "block";
+  }
+
+  // Main
+  document.getElementById("main-email").textContent = email;
+  document.getElementById("main-name").textContent = name || "";
+  if(picture) {
+    const mainPic = document.getElementById("main-picture");
+    mainPic.src = picture;
+    mainPic.style.display = "block";
+  }
+}
+</script>
+</body>
+</html>
+
